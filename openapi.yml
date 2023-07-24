@@ -1,0 +1,102 @@
+openapi: 3.0.3
+info:
+  title: OpenMandriva Web Image Builder API
+  version: 0.0.1
+servers:
+  - url: http://localhost:8080
+    description: Development Server
+paths:
+  /image:
+    post:
+      summary: Builds an image
+      description: An image is build and stored under a url by providing a Build Object in the request body
+      operationId: buildImage
+      requestBody:
+        description: The Build Object, containing all necessary information to build the desired image
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/Build'
+      responses:
+        '201':
+          description: Information about the newly created image
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/SuccessfulBuildResponse'
+components:
+  schemas:
+    Build:
+      type: object
+      required:
+        - architecture
+      properties:
+        architecture:
+          type: string
+          description: The name of the architecture for which the image is targeted for
+          example: 'aarch64-uefi'
+        version:
+          type: string
+          description: The specific release version of OpenMandriva inside the image
+          example: '4.2'
+        desktop:
+          type: string
+          description: The name of the desktop to be installed
+          example: 'kde'
+        services:
+          type: array
+          items:
+            $ref: '#/components/schemas/Service'
+        packages:
+          type: array
+          items:
+            $ref: '#/components/schemas/Package'
+    Package:
+      type: object
+      required:
+        - name
+      properties:
+        name:
+          type: string
+          description: The name of the package or packageset you want to include inside the image
+          example: 'vim-enhanced'
+        installWeakDependencies:
+          type: boolean
+          description: Set this to false if weak dependencies should not be installed
+          default: true
+        packageType:
+          $ref: '#/components/schemas/PackageType'
+        repositoryType:
+          $ref: '#/components/schemas/RepositoryType'
+    Service:
+      type: object
+      required:
+        - name
+      properties:
+        name:
+          type: string
+          description: The name of the systemd service you want to enable or disable
+          example: 'cloud-init'
+        disabled:
+          type: boolean
+          description: Set this to true if you want to disable the named service
+    PackageType:
+      type: string
+      enum:
+        - INDIVIDUAL
+        - MULTIPLE
+    RepositoryType:
+      type: string
+      enum:
+        - UNSUPPORTED
+        - RESTRICTED
+        - NON-FREE
+    SuccessfulBuildResponse:
+      type: object
+      properties:
+        url:
+          type: string
+          description: The URL where the build image can be found and downloaded
+        build:
+          $ref: '#/components/schemas/Build'
