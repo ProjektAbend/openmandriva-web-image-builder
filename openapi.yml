@@ -91,11 +91,13 @@ components:
       properties:
         architecture:
           type: string
-          description: The name of the architecture for which the image is targeted for
+          description: >
+            The name of the architecture for which the image is targeted for
           example: 'aarch64-uefi'
         version:
           type: string
-          description: The specific release version of OpenMandriva inside the image
+          description: >
+            The specific release version of OpenMandriva inside the image
           example: '4.2'
         desktop:
           type: string
@@ -116,11 +118,14 @@ components:
       properties:
         name:
           type: string
-          description: The name of the package or packageset you want to include inside the image
+          description: >
+            The name of the package or packageset you want
+            to include inside the image
           example: 'vim-enhanced'
         installWeakDependencies:
           type: boolean
-          description: Set this to false if weak dependencies should not be installed
+          description: >
+            Set this to false if weak dependencies should not be installed
           default: true
         packageType:
           $ref: '#/components/schemas/PackageType'
@@ -133,11 +138,13 @@ components:
       properties:
         name:
           type: string
-          description: The name of the systemd service you want to enable or disable
+          description: >
+            The name of the systemd service you want to enable or disable
           example: 'cloud-init'
         disabled:
           type: boolean
-          description: Set this to true if you want to disable the named service
+          description: >
+            Set this to true if you want to disable the named service
     PackageType:
       type: string
       enum:
@@ -152,7 +159,9 @@ components:
     ImageId:
       type: string
       pattern: '^[a-zA-Z0-9]{6}$'
-      description: The unique identifier for the image. It is randomly generated
+      description: >
+        The unique identifier for the image.
+        It is randomly generated
       example: 'a1b2c3'
     ImageInfo:
       type: object
