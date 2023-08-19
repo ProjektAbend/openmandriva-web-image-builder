@@ -9,10 +9,14 @@ paths:
   /build:
     post:
       summary: Builds an image
-      description: An image is set to be generated if the maximum capacity of the service is not reached
+      description: >
+        An image is set to be generated if the maximum capacity
+        of the service is not reached
       operationId: buildImage
       requestBody:
-        description: The ImageConfig Object, containing all necessary information to build the desired image
+        description: >
+          The ImageConfig object containing all necessary information
+          to build the desired image
         required: true
         content:
           application/json:
@@ -20,11 +24,13 @@ paths:
               $ref: '#/components/schemas/ImageConfig'
       responses:
         '201':
-          description: The ID of the current build process of the image
+          description: >
+            A confirmation that the build process has started along with
+            some informations about the image to be build
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/BuildId'
+                $ref: '#/components/schemas/ImageInfo'
         '503':
           description: Service has reached maximum capacity
           content:
@@ -34,35 +40,29 @@ paths:
                 properties:
                   message:
                     type: string
-                    example: "Service has reached maximum capacity - Come back later."
-  /status/{buildId}:
+                    example: >
+                      Service has reached maximum capacity
+                      - Come back later.
+  /status/{imageId}:
     get:
-      summary: Get status of build
+      summary: Get status of image
       description: Gets the status of the image beeing currently build
-      operationId: getStatusOfBuildById
+      operationId: getStatusOfImageById
       parameters:
-        - name: buildId
+        - name: imageId
           in: path
           required: true
           schema:
-            $ref: '#/components/schemas/BuildId'
+            $ref: '#/components/schemas/ImageId'
       responses:
         '200':
-          description: The build for the image is finished. The image is ready to be downloaded
+          description: >
+            The ImageInfo object which contains the
+            current state of the image build
           content:
             application/json:
               schema:
                 $ref: '#/components/schemas/ImageInfo'
-        '503':
-          description: Building of image is not finished
-          content:
-            application/json:
-              schema:
-                type: object
-                properties:
-                  message:
-                    type: string
-                    example: "Building of image is still ongoing"
   /image/{imageId}:
     get:
       summary: Gets an image by its ID
@@ -86,7 +86,6 @@ components:
   schemas:
     ImageConfig:
       type: object
-      description: The configuration of an image to be build
       required:
         - architecture
       properties:
@@ -150,11 +149,6 @@ components:
         - UNSUPPORTED
         - RESTRICTED
         - NON-FREE
-    BuildId:
-      type: string
-      pattern: '^[a-zA-Z0-9]{7}$'
-      description: The unique identifier for the build process. It is randomly generated
-      example: 'a1b2c3d'
     ImageId:
       type: string
       pattern: '^[a-zA-Z0-9]{6}$'
@@ -167,8 +161,15 @@ components:
       properties:
         imageId:
           $ref: '#/components/schemas/ImageId'
+        isAvailable:
+          type: boolean
+          description: Indicates whether the image is available to download
+          example: true
         availableUntil:
           type: string
           format: date-time
-          description: The date and time until which the image is available. An image is available for download for 24 hours after beeing generated
+          description: >
+            The date and time until which the image is available.
+            An image is available for download for 24 hours
+            after beeing generated
           example: "2023-08-15T12:34:56Z"
