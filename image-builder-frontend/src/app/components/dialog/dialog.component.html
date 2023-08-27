@@ -1,5 +1,6 @@
 <div class="wrapper">
-  <img src="assets/sad-face.png">
+  <img *ngIf="data.status == DialogStatus.SUCCESS" src="assets/success-icon.png">
+  <img *ngIf="data.status == DialogStatus.FAILED" src="assets/sad-face.png">
   <div class="spacer"></div>
   <p>{{data.text}}</p>
   <div class="spacer"></div>
