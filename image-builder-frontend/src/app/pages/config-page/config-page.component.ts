@@ -23,6 +23,7 @@ export class ConfigPageComponent implements OnInit {
 
   openDialog(): void {
     this.dialog.open(DialogComponent, {
+      width: '350px',
       data: {
         text: "Service has reached maximum capacity. Come back later"
       }
