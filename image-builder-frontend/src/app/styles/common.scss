@@ -14,6 +14,15 @@ button {
   }
 }
 
-.box-shadow {
+.config-input {
+  margin: 10px;
+  h2 {
+    margin-top: 0;
+  }
+}
+
+.card {
+  background-color: white;
+  padding: 1rem 2rem;
   box-shadow: 0px 5px 10px 0px rgba(0,0,0,0.75);
 }
