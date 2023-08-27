@@ -1,0 +1,19 @@
+button {
+  padding: 1rem 2rem;
+  color: white;
+  background-color: var(--color-primary-black);
+  font-size: 16px;
+  border-style: none;
+
+  &:hover {
+    cursor: pointer;
+    background-color: #414754;
+  }
+  &:active {
+    background-color: black;
+  }
+}
+
+.box-shadow {
+  box-shadow: 0px 5px 10px 0px rgba(0,0,0,0.75);
+}
