@@ -12,4 +12,8 @@ export class ConfigPageComponent implements OnInit {
   ngOnInit(): void {
   }
 
+  onChildOptionChange(selectedOption: string) {
+    console.log('Selected option:', selectedOption);
+  }
+
 }

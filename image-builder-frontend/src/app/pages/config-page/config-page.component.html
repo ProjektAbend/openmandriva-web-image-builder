@@ -1,8 +1,8 @@
 <div class="wrapper">
   <div class="config-inputs">
-    <app-architecture-input></app-architecture-input>
-    <app-architecture-input></app-architecture-input>
-    <app-architecture-input></app-architecture-input>
+    <app-architecture-input
+      (optionChange)="onChildOptionChange($event)"
+    ></app-architecture-input>
   </div>
 
   <div class="controls card">
