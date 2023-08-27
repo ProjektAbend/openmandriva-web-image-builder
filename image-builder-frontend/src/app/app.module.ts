@@ -3,7 +3,7 @@ import { NgModule } from '@angular/core';
 
 import { AppRoutingModule } from './app-routing.module';
 import { AppComponent } from './app.component';
-import { ConfigPageComponent } from './components/pages/config-page/config-page.component';
+import { ConfigPageComponent } from './pages/config-page/config-page.component';
 
 @NgModule({
   declarations: [
