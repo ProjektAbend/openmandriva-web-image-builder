@@ -18,7 +18,7 @@ export class ConfigPageComponent implements OnInit {
   }
 
   generateImage(): void {
-    this.openDialog()
+    this.openDialog();
   }
 
   openDialog(): void {
