@@ -8,18 +8,22 @@ import { ArchitectureInputComponent } from './components/architecture-input/arch
 import {FormsModule} from "@angular/forms";
 import {MatSelectModule} from "@angular/material/select";
 import { NoopAnimationsModule } from '@angular/platform-browser/animations';
+import { DialogComponent } from './components/dialog/dialog.component';
+import {MatDialog, MatDialogModule} from "@angular/material/dialog";
 
 @NgModule({
   declarations: [
     AppComponent,
     ConfigPageComponent,
-    ArchitectureInputComponent
+    ArchitectureInputComponent,
+    DialogComponent
   ],
   imports: [
     BrowserModule,
     AppRoutingModule,
     FormsModule,
     MatSelectModule,
+    MatDialogModule,
     NoopAnimationsModule
   ],
   providers: [],

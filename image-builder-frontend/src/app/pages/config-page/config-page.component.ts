@@ -1,4 +1,6 @@
 import { Component, OnInit } from '@angular/core';
+import {MatDialog} from "@angular/material/dialog";
+import {DialogComponent} from "../../components/dialog/dialog.component";
 
 @Component({
   selector: 'app-config-page',
@@ -6,14 +8,24 @@ import { Component, OnInit } from '@angular/core';
   styleUrls: ['./config-page.component.scss']
 })
 export class ConfigPageComponent implements OnInit {
-
-  constructor() { }
+  constructor(public dialog: MatDialog) {}
 
   ngOnInit(): void {
   }
 
-  onChildOptionChange(selectedOption: string) {
+  onArchitectureChange(selectedOption: string): void {
     console.log('Selected option:', selectedOption);
   }
 
+  generateImage(): void {
+    this.openDialog()
+  }
+
+  openDialog(): void {
+    this.dialog.open(DialogComponent, {
+      data: {
+        text: "Service has reached maximum capacity. Come back later"
+      }
+    });
+  }
 }

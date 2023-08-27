@@ -1,13 +1,14 @@
 <div class="wrapper">
   <div class="config-inputs">
     <app-architecture-input
-      (optionChange)="onChildOptionChange($event)"
+      (optionChange)="onArchitectureChange($event)"
     ></app-architecture-input>
   </div>
 
   <div class="controls card">
     <img src="assets/titlebanner.png">
-    <button>GENERATE</button>
+    <button (click)="generateImage()">GENERATE</button>
   </div>
 </div>
+
 
