@@ -1,16 +1,8 @@
-.PHONY: generate build run
+.PHONY: generate
 
-all: build run
+all: generate
 
 generate:
-	# reuse openapi-generator-cli from frontend
-	../../image-builder-frontend/node_modules/.bin/openapi-generator-cli generate -i ../../openapi.yml -g go-gin-server -o . --additional-properties=apiPath=cmd
-	go mod edit -go=1.18
+	mkdir api
+	oapi-codegen -package api -generate types,gin-server ../../openapi.yml > ./api/api.gen.go
 	go mod tidy
-
-build:
-	go mod tidy
-	go build -o cmd ./api/main.go
-
-run:
-	./api-gateway-service
