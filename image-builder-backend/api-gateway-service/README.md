@@ -1,8 +1,7 @@
 # ApiGatewayService
 
-
-
 ## How to install and run backend
+install oapi-codegen?
 
 ### generate api from openapi file
 just run 
