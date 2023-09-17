@@ -4,29 +4,32 @@ import (
 	"flag"
 	"github.com/ProjektAbend/api-gateway-service/api"
 	"github.com/gin-gonic/gin"
-	"log"
 	"net"
 	"net/http"
 )
 
-func NewGinServer(serverInterface *api.ServerInterface, port string) *http.Server {
-	r := gin.Default()
+type GinServer struct{}
 
-	api.RegisterHandlers(r, serverInterface)
+func (s GinServer) BuildImage(c *gin.Context) {
+	// TODO: implement
+}
 
-	s := &http.Server{
-		Handler: r,
-		Addr:    net.JoinHostPort("0.0.0.0", port),
-	}
-	return s
+func (s GinServer) GetImageById(c *gin.Context, imageId api.ImageId) {
+	// TODO: implement
+}
+
+func (s GinServer) GetStatusOfImageById(c *gin.Context, imageId api.ImageId) {
+	// TODO: implement
 }
 
 func main() {
+	r := gin.Default()
+	g := GinServer{}
+	api.RegisterHandlers(r, g)
 	port := flag.String("port", "8080", "Port for test HTTP server")
-	flag.Parse()
-	// Create an instance of our handler which satisfies the generated interface
-	serverInterface := api.ServerInterface()
-	s := NewGinServer(serverInterface, *port)
-	// And we serve HTTP until the world ends.
-	log.Fatal(s.ListenAndServe())
+	s := &http.Server{
+		Handler: r,
+		Addr:    net.JoinHostPort("0.0.0.0", *port),
+	}
+	s.ListenAndServe()
 }
