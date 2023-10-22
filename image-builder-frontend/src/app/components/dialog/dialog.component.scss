@@ -1,0 +1,18 @@
+.wrapper {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+
+  img {
+    height: 15rem;
+    width: 15rem;
+  }
+
+  p {
+    font-weight: bold;
+    font-size: 18px;
+    color: var(--color-primary-black);
+    text-align: center;
+  }
+}
