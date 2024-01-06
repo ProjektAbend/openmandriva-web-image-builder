@@ -1,7 +1,8 @@
 # MessageBrokerService - Open Mandriva Web Image Builder
 
 ## About this service
-- queues
+This service provides a message broker to enable asynchronous communication between 
+`api-gateway-service`, `generator-service` and `file-storage-service`.
 
 
 ## How to start the service
