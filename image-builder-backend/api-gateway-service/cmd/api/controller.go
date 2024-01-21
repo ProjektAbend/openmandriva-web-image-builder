@@ -1,7 +1,6 @@
 package api
 
 import (
-	"github.com/api-gateway-service/cmd/logic"
 	"github.com/gin-gonic/gin"
 	"net"
 	"net/http"
@@ -12,12 +11,23 @@ type Error struct {
 	Message string `json:"message"`
 }
 
+type ImageBuilder interface {
+	BuildImage(imageConfig ImageConfig) error
+	// Add other methods as needed
+}
+
 type GinServer struct {
-	ImageBuilderLogic *logic.ImageBuilderLogic
+	ImageBuilder ImageBuilder
 }
 
 func (s GinServer) BuildImage(c *gin.Context) {
-	err := s.ImageBuilderLogic.BuildImage()
+	// map json from request body to struct
+	var imageConfig ImageConfig
+	if err := c.BindJSON(&imageConfig); err != nil {
+		return
+	}
+
+	err := s.ImageBuilder.BuildImage(imageConfig)
 	if err != nil {
 		sendError(c, http.StatusInternalServerError, "Failed to build the image")
 		return
@@ -41,9 +51,11 @@ func sendError(c *gin.Context, code int, message string) {
 	c.JSON(code, err)
 }
 
-func StartServer() {
+func StartServer(imageBuilder ImageBuilder) {
 	r := gin.Default()
-	RegisterHandlers(r, GinServer{})
+	server := &GinServer{ImageBuilder: imageBuilder}
+	RegisterHandlers(r, server)
+
 	s := &http.Server{
 		Handler: r,
 		Addr:    net.JoinHostPort("0.0.0.0", "8080"),
