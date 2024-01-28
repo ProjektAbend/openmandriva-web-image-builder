@@ -13,7 +13,6 @@ type Error struct {
 
 type ImageBuilder interface {
 	BuildImage(imageConfig ImageConfig) error
-	// Add other methods as needed
 }
 
 type GinServer struct {
@@ -21,7 +20,6 @@ type GinServer struct {
 }
 
 func (s GinServer) BuildImage(c *gin.Context) {
-	// map json from request body to struct
 	var imageConfig ImageConfig
 	if err := c.BindJSON(&imageConfig); err != nil {
 		return

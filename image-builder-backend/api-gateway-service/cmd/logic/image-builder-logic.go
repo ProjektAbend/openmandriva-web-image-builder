@@ -1,6 +1,7 @@
 package logic
 
 import (
+	"encoding/json"
 	"fmt"
 	"github.com/api-gateway-service/cmd/api"
 )
@@ -8,7 +9,14 @@ import (
 type ImageBuilderLogic struct{}
 
 func (c *ImageBuilderLogic) BuildImage(imageConfig api.ImageConfig) error {
-	// TODO: send build request to message broker
-	fmt.Println(imageConfig)
+	obj := imageConfig
+
+	jsonData, err := json.Marshal(obj)
+	if err != nil {
+		fmt.Println("Error marshalling JSON:", err)
+	}
+
+	sendMessageToQueue(string(jsonData), "buildQueue")
+
 	return nil
 }

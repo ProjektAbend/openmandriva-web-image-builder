@@ -5,6 +5,7 @@ go 1.18
 require (
 	github.com/gin-gonic/gin v1.9.1
 	github.com/oapi-codegen/runtime v1.0.0
+	github.com/rabbitmq/amqp091-go v1.9.0
 )
 
 require (
