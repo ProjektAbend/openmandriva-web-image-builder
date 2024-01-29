@@ -2,6 +2,7 @@ package api
 
 import (
 	"github.com/gin-gonic/gin"
+	"log"
 	"net"
 	"net/http"
 )
@@ -27,6 +28,7 @@ func (s GinServer) BuildImage(c *gin.Context) {
 
 	err := s.ImageBuilder.BuildImage(imageConfig)
 	if err != nil {
+		log.Printf("Error in BuildImage: %s", err)
 		sendError(c, http.StatusInternalServerError, "Failed to build the image")
 		return
 	}
