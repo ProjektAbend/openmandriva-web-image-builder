@@ -91,6 +91,8 @@ components:
       properties:
         architecture:
           type: string
+          x-oapi-codegen-extra-tags:
+            validate: required
           description: >
             The name of the architecture for which the image is targeted for
           example: 'aarch64-uefi'

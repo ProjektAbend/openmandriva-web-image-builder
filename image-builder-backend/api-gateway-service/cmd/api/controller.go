@@ -2,6 +2,7 @@ package api
 
 import (
 	"github.com/gin-gonic/gin"
+	"github.com/go-playground/validator/v10"
 	"log"
 	"net"
 	"net/http"
@@ -23,6 +24,12 @@ type GinServer struct {
 func (s GinServer) BuildImage(c *gin.Context) {
 	var imageConfig ImageConfig
 	if err := c.BindJSON(&imageConfig); err != nil {
+		return
+	}
+
+	validate := validator.New()
+	if err := validate.Struct(imageConfig); err != nil {
+		sendError(c, http.StatusBadRequest, err.Error())
 		return
 	}
 
@@ -52,12 +59,12 @@ func sendError(c *gin.Context, code int, message string) {
 }
 
 func StartServer(imageBuilder ImageBuilder) {
-	r := gin.Default()
+	route := gin.Default()
 	server := &GinServer{ImageBuilder: imageBuilder}
-	RegisterHandlers(r, server)
+	RegisterHandlers(route, server)
 
 	s := &http.Server{
-		Handler: r,
+		Handler: route,
 		Addr:    net.JoinHostPort("0.0.0.0", "8080"),
 	}
 	s.ListenAndServe()
