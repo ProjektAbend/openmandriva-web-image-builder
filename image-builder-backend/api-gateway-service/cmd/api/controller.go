@@ -14,32 +14,36 @@ type Error struct {
 }
 
 type ImageBuilder interface {
-	BuildImage(imageConfig ImageConfig) error
+	BuildImage(imageConfig ImageConfig) (ImageInfo, error)
 }
 
 type GinServer struct {
 	ImageBuilder ImageBuilder
 }
 
-func (s GinServer) BuildImage(c *gin.Context) {
+func (s GinServer) BuildImage(context *gin.Context) {
 	var imageConfig ImageConfig
-	if err := c.BindJSON(&imageConfig); err != nil {
+	if err := context.BindJSON(&imageConfig); err != nil {
 		return
 	}
 
 	validate := validator.New()
 	if err := validate.Struct(imageConfig); err != nil {
-		sendError(c, http.StatusBadRequest, err.Error())
+		sendError(context, http.StatusBadRequest, err.Error())
 		return
 	}
 
-	err := s.ImageBuilder.BuildImage(imageConfig)
+	imageInfo, err := s.ImageBuilder.BuildImage(imageConfig)
 	if err != nil {
 		log.Printf("Error in BuildImage: %s", err)
-		sendError(c, http.StatusInternalServerError, "Failed to build the image")
+		sendError(context, http.StatusInternalServerError, "Failed to build the image")
 		return
 	}
-	c.JSON(http.StatusCreated, gin.H{"message": "The build process for the desired image has started."})
+	context.JSON(http.StatusCreated, gin.H{
+		"imageId":        imageInfo.ImageId,
+		"isAvailable":    imageInfo.IsAvailable,
+		"availableUntil": imageInfo.AvailableUntil,
+	})
 }
 
 func (s GinServer) GetImageById(c *gin.Context, imageId ImageId) {
