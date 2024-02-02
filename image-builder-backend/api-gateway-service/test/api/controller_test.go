@@ -68,10 +68,7 @@ func TestBuildImageShouldReturn201WhenCorrectImageConfig(t *testing.T) {
 		t.Errorf("error while sending request")
 	}
 
-	if status := response.Code; status != http.StatusCreated {
-		t.Errorf("handler returned wrong status code: got %v want %v",
-			status, http.StatusCreated)
-	}
+	require.Equal(t, http.StatusCreated, response.Code)
 }
 
 func TestBuildImageShouldAlsoReturnImageIdWhenReturning201(t *testing.T) {
@@ -100,10 +97,7 @@ func TestBuildImageShouldAlsoReturnImageIdWhenReturning201(t *testing.T) {
 		t.Errorf("error while sending request")
 	}
 
-	if status := response.Code; status != http.StatusCreated {
-		t.Errorf("handler returned wrong status code: got %v want %v",
-			status, http.StatusCreated)
-	}
+	require.Equal(t, http.StatusCreated, response.Code)
 
 	expectedResponse := "{\"imageId\": \"" + expectedImageId + "\"}"
 	actualResponse := response.Body.String()
@@ -121,10 +115,7 @@ func TestBuildImageShouldReturn201WhenImageConfigHasOnlyArchitecture(t *testing.
 		t.Errorf("error while sending request")
 	}
 
-	if status := response.Code; status != http.StatusCreated {
-		t.Errorf("handler returned wrong status code: got %v want %v",
-			status, http.StatusCreated)
-	}
+	require.Equal(t, http.StatusCreated, response.Code)
 }
 
 func TestBuildImageShouldReturn400WhenArchitectureOfImageConfigIsEmpty(t *testing.T) {
@@ -153,10 +144,7 @@ func TestBuildImageShouldReturn400WhenArchitectureOfImageConfigIsEmpty(t *testin
 		t.Errorf("error while sending request")
 	}
 
-	if status := response.Code; status != http.StatusBadRequest {
-		t.Errorf("handler returned wrong status code: got %v want %v",
-			status, http.StatusBadRequest)
-	}
+	require.Equal(t, http.StatusBadRequest, response.Code)
 }
 
 func TestBuildImageShouldReturn400WhenArchitectureOfImageConfigIsMissing(t *testing.T) {
@@ -184,8 +172,5 @@ func TestBuildImageShouldReturn400WhenArchitectureOfImageConfigIsMissing(t *test
 		t.Errorf("error while sending request")
 	}
 
-	if status := response.Code; status != http.StatusBadRequest {
-		t.Errorf("handler returned wrong status code: got %v want %v",
-			status, http.StatusBadRequest)
-	}
+	require.Equal(t, http.StatusBadRequest, response.Code)
 }

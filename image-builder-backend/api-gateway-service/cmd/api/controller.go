@@ -42,12 +42,12 @@ func (s GinServer) BuildImage(context *gin.Context) {
 	context.JSON(http.StatusCreated, gin.H{"imageId": imageId})
 }
 
-func (s GinServer) GetImageById(c *gin.Context, imageId ImageId) {
-	// TODO: implement
+func (s GinServer) GetImageById(context *gin.Context, imageId ImageId) {
+	context.Status(http.StatusNotImplemented)
 }
 
-func (s GinServer) GetStatusOfImageById(c *gin.Context, imageId ImageId) {
-	// TODO: implement
+func (s GinServer) GetStatusOfImageById(context *gin.Context, imageId ImageId) {
+	context.Status(http.StatusNotImplemented)
 }
 
 func sendError(c *gin.Context, code int, message string) {
