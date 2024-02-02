@@ -5,6 +5,7 @@ import (
 	"encoding/json"
 	"github.com/api-gateway-service/cmd/api"
 	"github.com/gin-gonic/gin"
+	"github.com/go-playground/validator/v10"
 	"net/http"
 	"net/http/httptest"
 	"testing"
@@ -20,12 +21,31 @@ func (m *mockImageBuilder) BuildImage(imageConfig api.ImageConfig) (api.ImageInf
 	return expectedImageInfo, nil
 }
 
-func TestBuildImageShouldReturn201WhenCorrectImageConfig(t *testing.T) {
-	server := &api.GinServer{ImageBuilder: &mockImageBuilder{}}
+func sendRequestBuild(payload string) (*httptest.ResponseRecorder, error) {
+	validate := validator.New()
+	server := &api.GinServer{
+		ImageBuilder: &mockImageBuilder{},
+		Validate:     validate,
+	}
 	route := gin.Default()
-	route.POST("/build", server.BuildImage)
+	route.POST("/whatever", server.BuildImage)
 
-	payload := []byte(`{
+	payloadByte := []byte(payload)
+
+	request, err := http.NewRequest("POST", "/whatever", bytes.NewBuffer(payloadByte))
+	if err != nil {
+		return &httptest.ResponseRecorder{}, err
+	}
+
+	request.Header.Set("Content-Type", "application/json")
+	recorder := httptest.NewRecorder()
+	route.ServeHTTP(recorder, request)
+
+	return recorder, nil
+}
+
+func TestBuildImageShouldReturn201WhenCorrectImageConfig(t *testing.T) {
+	requestBody := `{
         "architecture": "aarch64-uefi",
         "version": "4.2",
         "desktop": "kde",
@@ -43,28 +63,21 @@ func TestBuildImageShouldReturn201WhenCorrectImageConfig(t *testing.T) {
                 "repositoryType": "UNSUPPORTED"
             }
         ]
-    }`)
+    }`
 
-	request, err := http.NewRequest("POST", "/build", bytes.NewBuffer(payload))
+	response, err := sendRequestBuild(requestBody)
 	if err != nil {
-		t.Fatal(err)
+		t.Errorf("error while sending request")
 	}
-	request.Header.Set("Content-Type", "application/json")
-	recorder := httptest.NewRecorder()
-	route.ServeHTTP(recorder, request)
 
-	if status := recorder.Code; status != http.StatusCreated {
+	if status := response.Code; status != http.StatusCreated {
 		t.Errorf("handler returned wrong status code: got %v want %v",
 			status, http.StatusCreated)
 	}
 }
 
 func TestBuildImageShouldAlsoReturnValidImageInfoWhenReturning201(t *testing.T) {
-	server := &api.GinServer{ImageBuilder: &mockImageBuilder{}}
-	route := gin.Default()
-	route.POST("/build", server.BuildImage)
-
-	payload := []byte(`{
+	requestBody := `{
         "architecture": "aarch64-uefi",
         "version": "4.2",
         "desktop": "kde",
@@ -82,23 +95,20 @@ func TestBuildImageShouldAlsoReturnValidImageInfoWhenReturning201(t *testing.T) 
                 "repositoryType": "UNSUPPORTED"
             }
         ]
-    }`)
+    }`
 
-	request, err := http.NewRequest("POST", "/build", bytes.NewBuffer(payload))
+	response, err := sendRequestBuild(requestBody)
 	if err != nil {
-		t.Fatal(err)
+		t.Errorf("error while sending request")
 	}
-	request.Header.Set("Content-Type", "application/json")
-	recorder := httptest.NewRecorder()
-	route.ServeHTTP(recorder, request)
 
-	if status := recorder.Code; status != http.StatusCreated {
+	if status := response.Code; status != http.StatusCreated {
 		t.Errorf("handler returned wrong status code: got %v want %v",
 			status, http.StatusCreated)
 	}
 
 	var responseImageInfo api.ImageInfo
-	if err := json.Unmarshal(recorder.Body.Bytes(), &responseImageInfo); err != nil {
+	if err := json.Unmarshal(response.Body.Bytes(), &responseImageInfo); err != nil {
 		t.Errorf("Failed to parse response JSON: %v", err)
 		return
 	}
@@ -109,7 +119,7 @@ func TestBuildImageShouldAlsoReturnValidImageInfoWhenReturning201(t *testing.T) 
 		"isAvailable":    null
 	}`
 
-	actualImageInfo := recorder.Body.String()
+	actualImageInfo := response.Body.String()
 
 	var data1, data2 interface{}
 
@@ -132,34 +142,23 @@ func TestBuildImageShouldAlsoReturnValidImageInfoWhenReturning201(t *testing.T) 
 }
 
 func TestBuildImageShouldReturn201WhenImageConfigHasOnlyArchitecture(t *testing.T) {
-	server := &api.GinServer{ImageBuilder: &mockImageBuilder{}}
-	route := gin.Default()
-	route.POST("/build", server.BuildImage)
-
-	payload := []byte(`{
+	requestBody := `{
         "architecture": "aarch64-uefi"
-    }`)
+    }`
 
-	request, err := http.NewRequest("POST", "/build", bytes.NewBuffer(payload))
+	response, err := sendRequestBuild(requestBody)
 	if err != nil {
-		t.Fatal(err)
+		t.Errorf("error while sending request")
 	}
-	request.Header.Set("Content-Type", "application/json")
-	recorder := httptest.NewRecorder()
-	route.ServeHTTP(recorder, request)
 
-	if status := recorder.Code; status != http.StatusCreated {
+	if status := response.Code; status != http.StatusCreated {
 		t.Errorf("handler returned wrong status code: got %v want %v",
 			status, http.StatusCreated)
 	}
 }
 
 func TestBuildImageShouldReturn400WhenArchitectureOfImageConfigIsEmpty(t *testing.T) {
-	server := &api.GinServer{ImageBuilder: &mockImageBuilder{}}
-	route := gin.Default()
-	route.POST("/build", server.BuildImage)
-
-	payload := []byte(`{
+	requestBody := `{
         "architecture": "",
         "version": "4.2",
         "desktop": "kde",
@@ -177,28 +176,21 @@ func TestBuildImageShouldReturn400WhenArchitectureOfImageConfigIsEmpty(t *testin
                 "repositoryType": "UNSUPPORTED"
             }
         ]
-    }`)
+    }`
 
-	request, err := http.NewRequest("POST", "/build", bytes.NewBuffer(payload))
+	response, err := sendRequestBuild(requestBody)
 	if err != nil {
-		t.Fatal(err)
+		t.Errorf("error while sending request")
 	}
-	request.Header.Set("Content-Type", "application/json")
-	recorder := httptest.NewRecorder()
-	route.ServeHTTP(recorder, request)
 
-	if status := recorder.Code; status != http.StatusBadRequest {
+	if status := response.Code; status != http.StatusBadRequest {
 		t.Errorf("handler returned wrong status code: got %v want %v",
 			status, http.StatusBadRequest)
 	}
 }
 
 func TestBuildImageShouldReturn400WhenArchitectureOfImageConfigIsMissing(t *testing.T) {
-	server := &api.GinServer{ImageBuilder: &mockImageBuilder{}}
-	route := gin.Default()
-	route.POST("/build", server.BuildImage)
-
-	payload := []byte(`{
+	requestBody := `{
         "version": "4.2",
         "desktop": "kde",
         "services": [
@@ -215,17 +207,14 @@ func TestBuildImageShouldReturn400WhenArchitectureOfImageConfigIsMissing(t *test
                 "repositoryType": "UNSUPPORTED"
             }
         ]
-    }`)
+    }`
 
-	request, err := http.NewRequest("POST", "/build", bytes.NewBuffer(payload))
+	response, err := sendRequestBuild(requestBody)
 	if err != nil {
-		t.Fatal(err)
+		t.Errorf("error while sending request")
 	}
-	request.Header.Set("Content-Type", "application/json")
-	recorder := httptest.NewRecorder()
-	route.ServeHTTP(recorder, request)
 
-	if status := recorder.Code; status != http.StatusBadRequest {
+	if status := response.Code; status != http.StatusBadRequest {
 		t.Errorf("handler returned wrong status code: got %v want %v",
 			status, http.StatusBadRequest)
 	}

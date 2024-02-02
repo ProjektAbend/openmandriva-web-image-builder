@@ -19,6 +19,7 @@ type ImageBuilder interface {
 
 type GinServer struct {
 	ImageBuilder ImageBuilder
+	Validate     *validator.Validate
 }
 
 func (s GinServer) BuildImage(context *gin.Context) {
@@ -27,8 +28,7 @@ func (s GinServer) BuildImage(context *gin.Context) {
 		return
 	}
 
-	validate := validator.New()
-	if err := validate.Struct(imageConfig); err != nil {
+	if err := s.Validate.Struct(imageConfig); err != nil {
 		sendError(context, http.StatusBadRequest, err.Error())
 		return
 	}
@@ -62,9 +62,12 @@ func sendError(c *gin.Context, code int, message string) {
 	c.JSON(code, err)
 }
 
-func StartServer(imageBuilder ImageBuilder) {
+func StartServer(imageBuilder ImageBuilder, validate *validator.Validate) {
 	route := gin.Default()
-	server := &GinServer{ImageBuilder: imageBuilder}
+	server := &GinServer{
+		ImageBuilder: imageBuilder,
+		Validate:     validate,
+	}
 	RegisterHandlers(route, server)
 
 	s := &http.Server{

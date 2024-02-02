@@ -15,6 +15,7 @@ func (c *ImageBuilderLogic) BuildImage(imageConfig api.ImageConfig) (api.ImageIn
 	}
 
 	imageConfig.ImageId = &imageId
+
 	jsonData, err := json.Marshal(imageConfig)
 	if err != nil {
 		return api.ImageInfo{}, fmt.Errorf("error marshalling JSON %s", err)
@@ -33,5 +34,8 @@ func (c *ImageBuilderLogic) BuildImage(imageConfig api.ImageConfig) (api.ImageIn
 
 func generateImageId() (api.ImageId, error) {
 	// TODO: implement
+	// Keep track of every generated imageId on a list as long as the image with the
+	// given imageId is available to download. Make sure the imageId does not exist yet
+	// by comparing the generated imageId with the existing ones on the list.
 	return "a1b2c3", nil
 }
