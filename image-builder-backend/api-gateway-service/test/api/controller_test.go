@@ -2,10 +2,10 @@ package api
 
 import (
 	"bytes"
-	"encoding/json"
 	"github.com/api-gateway-service/cmd/api"
 	"github.com/gin-gonic/gin"
 	"github.com/go-playground/validator/v10"
+	"github.com/stretchr/testify/require"
 	"net/http"
 	"net/http/httptest"
 	"testing"
@@ -13,12 +13,10 @@ import (
 
 type mockImageBuilder struct{}
 
-var expectedImageInfo = api.ImageInfo{
-	ImageId: "a1b2c3",
-}
+var expectedImageId = "a1b2c3"
 
-func (m *mockImageBuilder) BuildImage(imageConfig api.ImageConfig) (api.ImageInfo, error) {
-	return expectedImageInfo, nil
+func (m *mockImageBuilder) BuildImage(imageConfig api.ImageConfig) (api.ImageId, error) {
+	return expectedImageId, nil
 }
 
 func sendRequestBuild(payload string) (*httptest.ResponseRecorder, error) {
@@ -34,7 +32,7 @@ func sendRequestBuild(payload string) (*httptest.ResponseRecorder, error) {
 
 	request, err := http.NewRequest("POST", "/whatever", bytes.NewBuffer(payloadByte))
 	if err != nil {
-		return &httptest.ResponseRecorder{}, err
+		return nil, err
 	}
 
 	request.Header.Set("Content-Type", "application/json")
@@ -76,7 +74,7 @@ func TestBuildImageShouldReturn201WhenCorrectImageConfig(t *testing.T) {
 	}
 }
 
-func TestBuildImageShouldAlsoReturnValidImageInfoWhenReturning201(t *testing.T) {
+func TestBuildImageShouldAlsoReturnImageIdWhenReturning201(t *testing.T) {
 	requestBody := `{
         "architecture": "aarch64-uefi",
         "version": "4.2",
@@ -107,38 +105,10 @@ func TestBuildImageShouldAlsoReturnValidImageInfoWhenReturning201(t *testing.T) 
 			status, http.StatusCreated)
 	}
 
-	var responseImageInfo api.ImageInfo
-	if err := json.Unmarshal(response.Body.Bytes(), &responseImageInfo); err != nil {
-		t.Errorf("Failed to parse response JSON: %v", err)
-		return
-	}
+	expectedResponse := "{\"imageId\": \"" + expectedImageId + "\"}"
+	actualResponse := response.Body.String()
 
-	expectedImageInfo2 := `{
-		"availableUntil": null,
-		"imageId":        "a1b2c3",
-		"isAvailable":    null
-	}`
-
-	actualImageInfo := response.Body.String()
-
-	var data1, data2 interface{}
-
-	if err := json.Unmarshal([]byte(expectedImageInfo2), &data1); err != nil {
-		t.Errorf("Error parsing expectedImageInfo: %s", err)
-		return
-	}
-
-	if err := json.Unmarshal([]byte(actualImageInfo), &data2); err != nil {
-		t.Errorf("Error parsing actualImageInfo: %s", err)
-		return
-	}
-
-	json1, _ := json.Marshal(data1)
-	json2, _ := json.Marshal(data2)
-
-	if string(json1) != string(json2) {
-		t.Errorf("Response expected to be %s but was %s", json1, json2)
-	}
+	require.JSONEq(t, expectedResponse, actualResponse)
 }
 
 func TestBuildImageShouldReturn201WhenImageConfigHasOnlyArchitecture(t *testing.T) {

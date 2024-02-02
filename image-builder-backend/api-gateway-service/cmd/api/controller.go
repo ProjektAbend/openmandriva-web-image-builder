@@ -14,7 +14,7 @@ type Error struct {
 }
 
 type ImageBuilder interface {
-	BuildImage(imageConfig ImageConfig) (ImageInfo, error)
+	BuildImage(imageConfig ImageConfig) (ImageId, error)
 }
 
 type GinServer struct {
@@ -33,17 +33,13 @@ func (s GinServer) BuildImage(context *gin.Context) {
 		return
 	}
 
-	imageInfo, err := s.ImageBuilder.BuildImage(imageConfig)
+	imageId, err := s.ImageBuilder.BuildImage(imageConfig)
 	if err != nil {
 		log.Printf("Error in BuildImage: %s", err)
 		sendError(context, http.StatusInternalServerError, "Failed to build the image")
 		return
 	}
-	context.JSON(http.StatusCreated, gin.H{
-		"imageId":        imageInfo.ImageId,
-		"isAvailable":    imageInfo.IsAvailable,
-		"availableUntil": imageInfo.AvailableUntil,
-	})
+	context.JSON(http.StatusCreated, gin.H{"imageId": imageId})
 }
 
 func (s GinServer) GetImageById(c *gin.Context, imageId ImageId) {
