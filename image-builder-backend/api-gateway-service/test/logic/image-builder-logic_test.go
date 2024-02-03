@@ -11,11 +11,7 @@ import (
 func TestBuildImageShouldReturnString(t *testing.T) {
 	imageBuilderLogic := initImageBuilderLogic(&mocks.MockMessageBroker{})
 
-	imageConfig := api.ImageConfig{
-		Architecture: "aarch64-uefi",
-	}
-
-	imageId, _ := imageBuilderLogic.BuildImage(imageConfig)
+	imageId, _ := imageBuilderLogic.BuildImage(api.ImageConfig{})
 
 	require.IsType(t, "", imageId)
 }
@@ -23,11 +19,7 @@ func TestBuildImageShouldReturnString(t *testing.T) {
 func TestBuildImageShouldReturnErrorWhenMessageBrokerFailed(t *testing.T) {
 	imageBuilderLogic := initImageBuilderLogic(&mocks.MockMessageBrokerReturnsError{})
 
-	imageConfig := api.ImageConfig{
-		Architecture: "aarch64-uefi",
-	}
-
-	_, err := imageBuilderLogic.BuildImage(imageConfig)
+	_, err := imageBuilderLogic.BuildImage(api.ImageConfig{})
 
 	require.NotEqual(t, nil, err)
 }
