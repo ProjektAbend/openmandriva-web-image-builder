@@ -181,8 +181,8 @@ func TestBuildImageShouldReturn500WhenLogicReturnsError(t *testing.T) {
 func initServer(imageBuilder mocks.ImageBuilderLogic) *api.GinServer {
 	validate := validator.New()
 	server := &api.GinServer{
-		ImageBuilder: imageBuilder,
-		Validate:     validate,
+		ImageBuilderLogic: imageBuilder,
+		Validate:          validate,
 	}
 	return server
 }

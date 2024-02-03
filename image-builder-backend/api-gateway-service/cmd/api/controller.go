@@ -13,13 +13,13 @@ type Error struct {
 	Message string `json:"message"`
 }
 
-type ImageBuilder interface {
+type ImageBuilderLogic interface {
 	BuildImage(imageConfig ImageConfig) (ImageId, error)
 }
 
 type GinServer struct {
-	ImageBuilder ImageBuilder
-	Validate     *validator.Validate
+	ImageBuilderLogic ImageBuilderLogic
+	Validate          *validator.Validate
 }
 
 func (s GinServer) BuildImage(context *gin.Context) {
@@ -33,7 +33,7 @@ func (s GinServer) BuildImage(context *gin.Context) {
 		return
 	}
 
-	imageId, err := s.ImageBuilder.BuildImage(imageConfig)
+	imageId, err := s.ImageBuilderLogic.BuildImage(imageConfig)
 	if err != nil {
 		log.Printf("Error in BuildImage: %s", err)
 		sendError(context, http.StatusInternalServerError, "Failed to build the image")
@@ -58,11 +58,11 @@ func sendError(c *gin.Context, code int, message string) {
 	c.JSON(code, err)
 }
 
-func StartServer(imageBuilder ImageBuilder, validate *validator.Validate) {
+func StartServer(imageBuilder ImageBuilderLogic, validate *validator.Validate) {
 	route := gin.Default()
 	server := &GinServer{
-		ImageBuilder: imageBuilder,
-		Validate:     validate,
+		ImageBuilderLogic: imageBuilder,
+		Validate:          validate,
 	}
 	RegisterHandlers(route, server)
 
