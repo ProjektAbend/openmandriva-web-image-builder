@@ -8,9 +8,9 @@ import (
 	amqp "github.com/rabbitmq/amqp091-go"
 )
 
-type messageBroker struct{}
+type MessageBroker struct{}
 
-func (c *messageBroker) SendMessageToQueue(message string, queue string) error {
+func (c *MessageBroker) SendMessageToQueue(message string, queue string) error {
 	conn, err := amqp.Dial("amqp://admin:admin@localhost:5672/")
 	if err != nil {
 		return fmt.Errorf("failed to connect to RabbitMQ: %s", err)

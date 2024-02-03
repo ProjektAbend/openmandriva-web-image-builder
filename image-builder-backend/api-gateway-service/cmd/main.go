@@ -7,7 +7,10 @@ import (
 )
 
 func main() {
-	imageBuilderLogic := &logic.ImageBuilderLogic{}
+	messageBrokerLogic := &logic.MessageBroker{}
+	imageBuilderLogic := &logic.ImageBuilderLogic{
+		MessageBroker: messageBrokerLogic,
+	}
 	validate := validator.New()
 
 	api.StartServer(imageBuilderLogic, validate)

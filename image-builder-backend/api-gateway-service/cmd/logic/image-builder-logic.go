@@ -6,12 +6,12 @@ import (
 	"github.com/api-gateway-service/cmd/api"
 )
 
-type MessageBroker interface {
+type messageBroker interface {
 	SendMessageToQueue(message string, queue string) error
 }
 
 type ImageBuilderLogic struct {
-	MessageBroker MessageBroker
+	MessageBroker messageBroker
 }
 
 func (c *ImageBuilderLogic) BuildImage(imageConfig api.ImageConfig) (api.ImageId, error) {
