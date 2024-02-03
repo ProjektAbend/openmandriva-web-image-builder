@@ -13,7 +13,7 @@ import (
 )
 
 func TestBuildImageShouldReturn201WhenCorrectImageConfig(t *testing.T) {
-	server := initServer(&mocks.MockImageBuilder{})
+	server := initServer(&mocks.MockImageBuilderLogic{})
 
 	requestBody := `{
         "architecture": "aarch64-uefi",
@@ -41,7 +41,7 @@ func TestBuildImageShouldReturn201WhenCorrectImageConfig(t *testing.T) {
 }
 
 func TestBuildImageShouldAlsoReturnImageIdWhenReturning201(t *testing.T) {
-	server := initServer(&mocks.MockImageBuilder{})
+	server := initServer(&mocks.MockImageBuilderLogic{})
 
 	requestBody := `{
         "architecture": "aarch64-uefi",
@@ -74,7 +74,7 @@ func TestBuildImageShouldAlsoReturnImageIdWhenReturning201(t *testing.T) {
 }
 
 func TestBuildImageShouldReturn201WhenImageConfigHasOnlyArchitecture(t *testing.T) {
-	server := initServer(&mocks.MockImageBuilder{})
+	server := initServer(&mocks.MockImageBuilderLogic{})
 
 	requestBody := `{
         "architecture": "aarch64-uefi"
@@ -86,7 +86,7 @@ func TestBuildImageShouldReturn201WhenImageConfigHasOnlyArchitecture(t *testing.
 }
 
 func TestBuildImageShouldReturn400WhenArchitectureOfImageConfigIsEmpty(t *testing.T) {
-	server := initServer(&mocks.MockImageBuilder{})
+	server := initServer(&mocks.MockImageBuilderLogic{})
 
 	requestBody := `{
         "architecture": "",
@@ -114,7 +114,7 @@ func TestBuildImageShouldReturn400WhenArchitectureOfImageConfigIsEmpty(t *testin
 }
 
 func TestBuildImageShouldReturn400WhenRequestBodyIsEmpty(t *testing.T) {
-	server := initServer(&mocks.MockImageBuilder{})
+	server := initServer(&mocks.MockImageBuilderLogic{})
 
 	requestBody := ""
 
@@ -124,7 +124,7 @@ func TestBuildImageShouldReturn400WhenRequestBodyIsEmpty(t *testing.T) {
 }
 
 func TestBuildImageShouldReturn400WhenArchitectureOfImageConfigIsMissing(t *testing.T) {
-	server := initServer(&mocks.MockImageBuilder{})
+	server := initServer(&mocks.MockImageBuilderLogic{})
 
 	requestBody := `{
         "version": "4.2",
@@ -151,7 +151,7 @@ func TestBuildImageShouldReturn400WhenArchitectureOfImageConfigIsMissing(t *test
 }
 
 func TestBuildImageShouldReturn500WhenLogicReturnsError(t *testing.T) {
-	server := initServer(&mocks.MockImageBuilderReturnsError{})
+	server := initServer(&mocks.MockImageBuilderLogicReturnsError{})
 
 	requestBody := `{
         "architecture": "aarch64-uefi",
@@ -178,7 +178,7 @@ func TestBuildImageShouldReturn500WhenLogicReturnsError(t *testing.T) {
 	require.Equal(t, http.StatusInternalServerError, response.Code)
 }
 
-func initServer(imageBuilder mocks.ImageBuilder) *api.GinServer {
+func initServer(imageBuilder mocks.ImageBuilderLogic) *api.GinServer {
 	validate := validator.New()
 	server := &api.GinServer{
 		ImageBuilder: imageBuilder,

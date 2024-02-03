@@ -5,19 +5,19 @@ import (
 	"github.com/api-gateway-service/cmd/api"
 )
 
-type ImageBuilder interface {
+type ImageBuilderLogic interface {
 	BuildImage(imageConfig api.ImageConfig) (api.ImageId, error)
 }
 
-type MockImageBuilder struct{}
+type MockImageBuilderLogic struct{}
 
-func (m *MockImageBuilder) BuildImage(imageConfig api.ImageConfig) (api.ImageId, error) {
+func (m *MockImageBuilderLogic) BuildImage(imageConfig api.ImageConfig) (api.ImageId, error) {
 	return "a1b2c3", nil
 }
 
-type MockImageBuilderReturnsError struct{}
+type MockImageBuilderLogicReturnsError struct{}
 
-func (m *MockImageBuilderReturnsError) BuildImage(imageConfig api.ImageConfig) (api.ImageId, error) {
+func (m *MockImageBuilderLogicReturnsError) BuildImage(imageConfig api.ImageConfig) (api.ImageId, error) {
 	return "", errors.New("error occurred")
 }
 
