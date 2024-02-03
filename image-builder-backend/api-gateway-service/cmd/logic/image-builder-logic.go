@@ -6,7 +6,13 @@ import (
 	"github.com/api-gateway-service/cmd/api"
 )
 
-type ImageBuilderLogic struct{}
+type MessageBroker interface {
+	SendMessageToQueue(message string, queue string) error
+}
+
+type ImageBuilderLogic struct {
+	MessageBroker MessageBroker
+}
 
 func (c *ImageBuilderLogic) BuildImage(imageConfig api.ImageConfig) (api.ImageId, error) {
 	imageId, err := generateImageId()
@@ -21,7 +27,7 @@ func (c *ImageBuilderLogic) BuildImage(imageConfig api.ImageConfig) (api.ImageId
 		return "", fmt.Errorf("error marshalling JSON %s", err)
 	}
 
-	if err := sendMessageToQueue(string(jsonData), "buildQueue"); err != nil {
+	if err := c.MessageBroker.SendMessageToQueue(string(jsonData), "buildQueue"); err != nil {
 		return "", fmt.Errorf("error sending message to queue: %s", err)
 	}
 

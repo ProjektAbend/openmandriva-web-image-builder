@@ -18,5 +18,21 @@ func (m *MockImageBuilder) BuildImage(imageConfig api.ImageConfig) (api.ImageId,
 type MockImageBuilderReturnsError struct{}
 
 func (m *MockImageBuilderReturnsError) BuildImage(imageConfig api.ImageConfig) (api.ImageId, error) {
-	return "", errors.New("error occurred while building image")
+	return "", errors.New("error occurred")
+}
+
+type MessageBroker interface {
+	SendMessageToQueue(message string, queue string) error
+}
+
+type MockMessageBroker struct{}
+
+func (m *MockMessageBroker) SendMessageToQueue(message string, queue string) error {
+	return nil
+}
+
+type MockMessageBrokerReturnsError struct{}
+
+func (m *MockMessageBrokerReturnsError) SendMessageToQueue(message string, queue string) error {
+	return errors.New("error occurred")
 }
