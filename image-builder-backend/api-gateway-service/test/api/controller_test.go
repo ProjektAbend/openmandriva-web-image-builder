@@ -113,6 +113,16 @@ func TestBuildImageShouldReturn400WhenArchitectureOfImageConfigIsEmpty(t *testin
 	require.Equal(t, http.StatusBadRequest, response.Code)
 }
 
+func TestBuildImageShouldReturn400WhenRequestBodyIsEmpty(t *testing.T) {
+	server := initServer(&mocks.MockImageBuilder{})
+
+	requestBody := ""
+
+	response := sendRequestBuild(t, server, requestBody)
+
+	require.Equal(t, http.StatusBadRequest, response.Code)
+}
+
 func TestBuildImageShouldReturn400WhenArchitectureOfImageConfigIsMissing(t *testing.T) {
 	server := initServer(&mocks.MockImageBuilder{})
 
