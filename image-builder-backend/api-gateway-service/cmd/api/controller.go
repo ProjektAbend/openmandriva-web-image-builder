@@ -70,5 +70,8 @@ func StartServer(imageBuilder ImageBuilderLogic, validate *validator.Validate) {
 		Handler: route,
 		Addr:    net.JoinHostPort("0.0.0.0", "8080"),
 	}
-	s.ListenAndServe()
+
+	if err := s.ListenAndServe(); err != nil {
+		log.Printf("Error starting Server: %s", err)
+	}
 }

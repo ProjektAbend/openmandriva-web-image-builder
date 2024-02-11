@@ -8,6 +8,7 @@ require (
 	github.com/oapi-codegen/runtime v1.0.0
 	github.com/rabbitmq/amqp091-go v1.9.0
 	github.com/stretchr/testify v1.8.4
+	github.com/teris-io/shortid v0.0.0-20220617161101-71ec9f2aa569
 )
 
 require (

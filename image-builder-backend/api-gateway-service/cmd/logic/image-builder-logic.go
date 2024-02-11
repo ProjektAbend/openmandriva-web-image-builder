@@ -4,6 +4,7 @@ import (
 	"encoding/json"
 	"fmt"
 	"github.com/api-gateway-service/cmd/api"
+	"github.com/teris-io/shortid"
 )
 
 type messageBroker interface {
@@ -11,11 +12,12 @@ type messageBroker interface {
 }
 
 type ImageBuilderLogic struct {
-	MessageBroker messageBroker
+	MessageBroker    messageBroker
+	ShortIdGenerator *shortid.Shortid
 }
 
 func (c *ImageBuilderLogic) BuildImage(imageConfig api.ImageConfig) (api.ImageId, error) {
-	imageId, err := generateImageId()
+	imageId, err := c.generateImageId()
 	if err != nil {
 		return "", fmt.Errorf("error generating ImageId %s", err)
 	}
@@ -34,7 +36,11 @@ func (c *ImageBuilderLogic) BuildImage(imageConfig api.ImageConfig) (api.ImageId
 	return imageId, nil
 }
 
-func generateImageId() (api.ImageId, error) {
-	// TODO: implement
-	return "a1b2c3", nil
+func (c *ImageBuilderLogic) generateImageId() (api.ImageId, error) {
+	shortId, err := c.ShortIdGenerator.Generate()
+	if err != nil {
+		return "", err
+	}
+
+	return shortId, nil
 }
