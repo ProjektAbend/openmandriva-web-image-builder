@@ -1,10 +1,11 @@
-package logic
+package logic_test
 
 import (
 	"github.com/api-gateway-service/cmd/api"
 	"github.com/api-gateway-service/cmd/logic"
 	"github.com/api-gateway-service/test/mocks"
 	"github.com/stretchr/testify/require"
+	"github.com/teris-io/shortid"
 	"testing"
 )
 
@@ -25,8 +26,12 @@ func TestBuildImageShouldReturnErrorWhenMessageBrokerFailed(t *testing.T) {
 }
 
 func initImageBuilderLogic(messageBroker mocks.MessageBroker) *logic.ImageBuilderLogic {
+	shortIdGenerator, _ := shortid.New(1, shortid.DefaultABC, 2342)
+
 	imageBuilderLogic := &logic.ImageBuilderLogic{
-		MessageBroker: messageBroker,
+		MessageBroker:    messageBroker,
+		ShortIdGenerator: shortIdGenerator,
 	}
+
 	return imageBuilderLogic
 }

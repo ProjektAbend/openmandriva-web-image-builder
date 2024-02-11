@@ -12,7 +12,7 @@ type ImageBuilderLogic interface {
 type MockImageBuilderLogic struct{}
 
 func (m *MockImageBuilderLogic) BuildImage(imageConfig api.ImageConfig) (api.ImageId, error) {
-	return "a1b2c3", nil
+	return "WZ3h633-p", nil
 }
 
 type MockImageBuilderLogicReturnsError struct{}

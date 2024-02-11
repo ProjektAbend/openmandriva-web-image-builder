@@ -1,4 +1,4 @@
-package api
+package api_test
 
 import (
 	"bytes"
@@ -67,7 +67,7 @@ func TestBuildImageShouldAlsoReturnImageIdWhenReturning201(t *testing.T) {
 
 	require.Equal(t, http.StatusCreated, response.Code)
 
-	expectedResponse := "{\"imageId\": \"a1b2c3\"}"
+	expectedResponse := "{\"imageId\": \"WZ3h633-p\"}"
 	actualResponse := response.Body.String()
 
 	require.JSONEq(t, expectedResponse, actualResponse)
