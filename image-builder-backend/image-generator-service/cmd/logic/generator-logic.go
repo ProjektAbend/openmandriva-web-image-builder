@@ -12,18 +12,13 @@ type GeneratorLogic struct {
 
 func (c *GeneratorLogic) ProcessBuildRequests() {
 	for {
-		// Consume one message
-		messages, err := c.MessageBroker.ConsumeMessage("buildQueue")
+		message, err := c.MessageBroker.ConsumeMessage("buildQueue")
 		if err != nil {
 			log.Printf("Error consuming message: %s", err)
 			return
 		}
 
-		// Wait for message
-		for message := range messages {
-			// Process the message
-			generateImage(message)
-		}
+		generateImage(message)
 	}
 }
 

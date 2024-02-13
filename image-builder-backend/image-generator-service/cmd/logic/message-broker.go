@@ -28,19 +28,11 @@ func New() (*MessageBroker, error) {
 	}, nil
 }
 
-func (c *MessageBroker) ConsumeMessage(queue string) (<-chan amqp.Delivery, error) {
-	messages, err := c.channel.Consume(
-		queue,
-		"",
-		true,
-		false,
-		false,
-		false,
-		nil,
-	)
+func (c *MessageBroker) ConsumeMessage(queue string) (amqp.Delivery, error) {
+	message, _, err := c.channel.Get(queue, true)
 	if err != nil {
-		return nil, err
+		return amqp.Delivery{}, err
 	}
 
-	return messages, nil
+	return message, nil
 }
