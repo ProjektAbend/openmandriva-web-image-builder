@@ -1,7 +1,8 @@
 package logic
 
 import (
-	amqp "github.com/rabbitmq/amqp091-go"
+	"encoding/json"
+	"github.com/image-generator-service/cmd/api"
 	"log"
 	"time"
 )
@@ -15,14 +16,19 @@ func (c *GeneratorLogic) ProcessBuildRequests() {
 		message, err := c.MessageBroker.ConsumeMessage("buildQueue")
 		if err != nil {
 			log.Printf("Error consuming message: %s", err)
-			return
 		}
 
-		generateImage(message)
+		var imageConfig api.ImageConfig
+		err = json.Unmarshal(message.Body, &imageConfig)
+		if err != nil {
+			log.Printf("Error unmarshalling message from message broker: %s", err)
+		}
+
+		generateImage(imageConfig)
 	}
 }
 
-func generateImage(message amqp.Delivery) {
-	log.Printf("Received a message: %s", message.Body)
+func generateImage(imageConfig api.ImageConfig) {
+	log.Printf("Processing image with ID: %v", *imageConfig.ImageId)
 	time.Sleep(10 * time.Second)
 }
