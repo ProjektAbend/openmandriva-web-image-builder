@@ -1,4 +1,4 @@
-module github.com/ProjektAbend/openmandriva-web-image-builder/image-builder-backend/image-generator-service
+module github.com/image-generator-service
 
 go 1.18
 

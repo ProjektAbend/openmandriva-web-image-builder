@@ -1,4 +1,4 @@
-module github.com/ProjektAbend/openmandriva-web-image-builder/image-builder-backend/api-gateway-service
+module github.com/api-gateway-service
 
 go 1.18
 

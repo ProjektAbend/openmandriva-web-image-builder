@@ -2,7 +2,7 @@ package mocks
 
 import (
 	"errors"
-	"github.com/ProjektAbend/openmandriva-web-image-builder/image-builder-backend/api-gateway-service/cmd/api"
+	"github.com/api-gateway-service/cmd/api"
 )
 
 type ImageBuilderLogic interface {

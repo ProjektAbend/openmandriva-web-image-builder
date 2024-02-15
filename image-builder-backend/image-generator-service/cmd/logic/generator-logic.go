@@ -2,8 +2,7 @@ package logic
 
 import (
 	"encoding/json"
-	"github.com/ProjektAbend/openmandriva-web-image-builder/image-builder-backend/image-generator-service/cmd/api"
-	"github.com/ProjektAbend/openmandriva-web-image-builder/image-builder-backend/shared"
+	"github.com/image-generator-service/cmd/api"
 	"log"
 	"time"
 )
@@ -14,7 +13,7 @@ type GeneratorLogic struct {
 
 func (c *GeneratorLogic) ProcessBuildRequests() {
 	for {
-		message, err := c.MessageBroker.ConsumeMessage(shared.BUILD_QUEUE)
+		message, err := c.MessageBroker.ConsumeMessage("buildQueue")
 		if err != nil {
 			log.Printf("Error consuming message: %s", err)
 		}

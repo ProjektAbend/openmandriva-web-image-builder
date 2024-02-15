@@ -2,8 +2,8 @@ package api_test
 
 import (
 	"bytes"
-	"github.com/ProjektAbend/openmandriva-web-image-builder/image-builder-backend/api-gateway-service/cmd/api"
-	"github.com/ProjektAbend/openmandriva-web-image-builder/image-builder-backend/api-gateway-service/test/mocks"
+	"github.com/api-gateway-service/cmd/api"
+	"github.com/api-gateway-service/test/mocks"
 	"github.com/gin-gonic/gin"
 	"github.com/go-playground/validator/v10"
 	"github.com/stretchr/testify/require"
