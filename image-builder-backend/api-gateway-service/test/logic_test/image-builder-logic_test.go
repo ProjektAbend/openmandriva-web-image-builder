@@ -1,9 +1,9 @@
 package logic_test
 
 import (
-	"github.com/api-gateway-service/cmd/api"
-	"github.com/api-gateway-service/cmd/logic"
-	"github.com/api-gateway-service/test/mocks"
+	"github.com/ProjektAbend/openmandriva-web-image-builder/image-builder-backend/api-gateway-service/cmd/api"
+	"github.com/ProjektAbend/openmandriva-web-image-builder/image-builder-backend/api-gateway-service/cmd/logic"
+	"github.com/ProjektAbend/openmandriva-web-image-builder/image-builder-backend/api-gateway-service/test/mocks"
 	"github.com/stretchr/testify/require"
 	"github.com/teris-io/shortid"
 	"testing"

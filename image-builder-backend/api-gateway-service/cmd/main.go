@@ -1,8 +1,8 @@
 package main
 
 import (
-	"github.com/api-gateway-service/cmd/api"
-	"github.com/api-gateway-service/cmd/logic"
+	"github.com/ProjektAbend/openmandriva-web-image-builder/image-builder-backend/api-gateway-service/cmd/api"
+	"github.com/ProjektAbend/openmandriva-web-image-builder/image-builder-backend/api-gateway-service/cmd/logic"
 	"github.com/go-playground/validator/v10"
 	"github.com/teris-io/shortid"
 )
