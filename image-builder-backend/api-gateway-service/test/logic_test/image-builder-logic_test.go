@@ -4,6 +4,7 @@ import (
 	"github.com/api-gateway-service/cmd/api"
 	"github.com/api-gateway-service/cmd/logic"
 	"github.com/api-gateway-service/test/mocks"
+	messagebroker "github.com/shared/message-broker"
 	"github.com/stretchr/testify/require"
 	"github.com/teris-io/shortid"
 	"testing"
@@ -25,7 +26,7 @@ func TestBuildImageShouldReturnErrorWhenMessageBrokerFailed(t *testing.T) {
 	require.NotEqual(t, nil, err)
 }
 
-func initImageBuilderLogic(messageBroker mocks.MessageBroker) *logic.ImageBuilderLogic {
+func initImageBuilderLogic(messageBroker messagebroker.MessageBrokerInterface) *logic.ImageBuilderLogic {
 	shortIdGenerator, _ := shortid.New(1, shortid.DefaultABC, 2342)
 
 	imageBuilderLogic := &logic.ImageBuilderLogic{

@@ -4,15 +4,12 @@ import (
 	"encoding/json"
 	"fmt"
 	"github.com/api-gateway-service/cmd/api"
+	messagebroker "github.com/shared/message-broker"
 	"github.com/teris-io/shortid"
 )
 
-type messageBroker interface {
-	SendMessageToQueue(message string, queue string) error
-}
-
 type ImageBuilderLogic struct {
-	MessageBroker    messageBroker
+	MessageBroker    messagebroker.MessageBrokerInterface
 	ShortIdGenerator *shortid.Shortid
 }
 
@@ -32,7 +29,6 @@ func (c *ImageBuilderLogic) BuildImage(imageConfig api.ImageConfig) (api.ImageId
 	if err := c.MessageBroker.SendMessageToQueue(string(jsonData), "buildQueue"); err != nil {
 		return "", fmt.Errorf("error sending message to queue: %s", err)
 	}
-
 	return imageId, nil
 }
 
@@ -41,6 +37,5 @@ func (c *ImageBuilderLogic) generateImageId() (api.ImageId, error) {
 	if err != nil {
 		return "", err
 	}
-
 	return shortId, nil
 }

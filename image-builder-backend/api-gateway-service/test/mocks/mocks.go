@@ -3,6 +3,7 @@ package mocks
 import (
 	"errors"
 	"github.com/api-gateway-service/cmd/api"
+	amqp "github.com/rabbitmq/amqp091-go"
 )
 
 type ImageBuilderLogic interface {
@@ -11,28 +12,32 @@ type ImageBuilderLogic interface {
 
 type MockImageBuilderLogic struct{}
 
-func (m *MockImageBuilderLogic) BuildImage(imageConfig api.ImageConfig) (api.ImageId, error) {
+func (m *MockImageBuilderLogic) BuildImage(_ api.ImageConfig) (api.ImageId, error) {
 	return "WZ3h633-p", nil
 }
 
 type MockImageBuilderLogicReturnsError struct{}
 
-func (m *MockImageBuilderLogicReturnsError) BuildImage(imageConfig api.ImageConfig) (api.ImageId, error) {
+func (m *MockImageBuilderLogicReturnsError) BuildImage(_ api.ImageConfig) (api.ImageId, error) {
 	return "", errors.New("error occurred")
-}
-
-type MessageBroker interface {
-	SendMessageToQueue(message string, queue string) error
 }
 
 type MockMessageBroker struct{}
 
-func (m *MockMessageBroker) SendMessageToQueue(message string, queue string) error {
+func (_ *MockMessageBroker) SendMessageToQueue(_ string, _ string) error {
 	return nil
+}
+
+func (_ *MockMessageBroker) ConsumeMessage(_ string) (amqp.Delivery, error) {
+	return amqp.Delivery{}, nil
 }
 
 type MockMessageBrokerReturnsError struct{}
 
-func (m *MockMessageBrokerReturnsError) SendMessageToQueue(message string, queue string) error {
+func (_ *MockMessageBrokerReturnsError) SendMessageToQueue(_ string, _ string) error {
 	return errors.New("error occurred")
+}
+
+func (_ *MockMessageBrokerReturnsError) ConsumeMessage(_ string) (amqp.Delivery, error) {
+	return amqp.Delivery{}, nil
 }
