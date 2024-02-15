@@ -178,7 +178,7 @@ func TestBuildImageShouldReturn500WhenLogicReturnsError(t *testing.T) {
 	require.Equal(t, http.StatusInternalServerError, response.Code)
 }
 
-func initServer(imageBuilder mocks.ImageBuilderLogic) *api.GinServer {
+func initServer(imageBuilder api.ImageBuilderLogicInterface) *api.GinServer {
 	validate := validator.New()
 	server := &api.GinServer{
 		ImageBuilderLogic: imageBuilder,

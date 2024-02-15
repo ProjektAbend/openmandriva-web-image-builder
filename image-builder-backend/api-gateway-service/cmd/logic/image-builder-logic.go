@@ -4,6 +4,7 @@ import (
 	"encoding/json"
 	"fmt"
 	"github.com/api-gateway-service/cmd/api"
+	"github.com/shared/constants"
 	messagebroker "github.com/shared/message-broker"
 	"github.com/teris-io/shortid"
 )
@@ -26,7 +27,7 @@ func (c *ImageBuilderLogic) BuildImage(imageConfig api.ImageConfig) (api.ImageId
 		return "", fmt.Errorf("error marshalling JSON %s", err)
 	}
 
-	if err := c.MessageBroker.SendMessageToQueue(string(jsonData), "buildQueue"); err != nil {
+	if err := c.MessageBroker.SendMessageToQueue(string(jsonData), constants.BUILD_QUEUE); err != nil {
 		return "", fmt.Errorf("error sending message to queue: %s", err)
 	}
 	return imageId, nil

@@ -6,10 +6,6 @@ import (
 	amqp "github.com/rabbitmq/amqp091-go"
 )
 
-type ImageBuilderLogic interface {
-	BuildImage(imageConfig api.ImageConfig) (api.ImageId, error)
-}
-
 type MockImageBuilderLogic struct{}
 
 func (m *MockImageBuilderLogic) BuildImage(_ api.ImageConfig) (api.ImageId, error) {

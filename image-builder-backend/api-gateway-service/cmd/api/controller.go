@@ -8,18 +8,18 @@ import (
 	"net/http"
 )
 
-type Error struct {
-	Code    int32  `json:"code"`
-	Message string `json:"message"`
-}
-
-type ImageBuilderLogic interface {
+type ImageBuilderLogicInterface interface {
 	BuildImage(imageConfig ImageConfig) (ImageId, error)
 }
 
 type GinServer struct {
-	ImageBuilderLogic ImageBuilderLogic
+	ImageBuilderLogic ImageBuilderLogicInterface
 	Validate          *validator.Validate
+}
+
+type Error struct {
+	Code    int32  `json:"code"`
+	Message string `json:"message"`
 }
 
 func (s GinServer) BuildImage(context *gin.Context) {
@@ -42,11 +42,11 @@ func (s GinServer) BuildImage(context *gin.Context) {
 	context.JSON(http.StatusCreated, gin.H{"imageId": imageId})
 }
 
-func (s GinServer) GetImageById(context *gin.Context, imageId ImageId) {
+func (s GinServer) GetImageById(context *gin.Context, _ ImageId) {
 	context.Status(http.StatusNotImplemented)
 }
 
-func (s GinServer) GetStatusOfImageById(context *gin.Context, imageId ImageId) {
+func (s GinServer) GetStatusOfImageById(context *gin.Context, _ ImageId) {
 	context.Status(http.StatusNotImplemented)
 }
 
@@ -58,7 +58,7 @@ func sendError(c *gin.Context, code int, message string) {
 	c.JSON(code, err)
 }
 
-func StartServer(imageBuilder ImageBuilderLogic, validate *validator.Validate) {
+func StartServer(imageBuilder ImageBuilderLogicInterface, validate *validator.Validate) {
 	route := gin.Default()
 	server := &GinServer{
 		ImageBuilderLogic: imageBuilder,
