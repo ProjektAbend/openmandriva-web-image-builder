@@ -28,3 +28,13 @@ func (_ *MockMessageBrokerReturnsError) SendMessageToQueue(_ string, _ string) e
 func (_ *MockMessageBrokerReturnsError) ConsumeMessage(_ string) (amqp.Delivery, error) {
 	return amqp.Delivery{}, fmt.Errorf("error occurred")
 }
+
+type MockMessageBrokerHasEmptyQueue struct{}
+
+func (_ *MockMessageBrokerHasEmptyQueue) SendMessageToQueue(_ string, _ string) error {
+	return nil
+}
+
+func (_ *MockMessageBrokerHasEmptyQueue) ConsumeMessage(_ string) (amqp.Delivery, error) {
+	return amqp.Delivery{}, nil
+}

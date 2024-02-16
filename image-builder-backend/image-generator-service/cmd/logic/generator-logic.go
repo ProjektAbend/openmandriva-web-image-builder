@@ -15,27 +15,33 @@ type GeneratorLogic struct {
 
 func (c *GeneratorLogic) ProcessBuildRequests() {
 	for {
-		imageConfig, err := c.ProcessBuildRequest()
+		imageConfig, isEmpty, err := c.ProcessBuildRequest()
 		if err != nil {
-			continue
+			log.Printf("error while consuming message: %s", err)
 		}
-		generateImage(imageConfig)
+		if !isEmpty {
+			generateImage(imageConfig)
+		}
 	}
 }
 
-func (c *GeneratorLogic) ProcessBuildRequest() (models.ImageConfig, error) {
+func (c *GeneratorLogic) ProcessBuildRequest() (models.ImageConfig, bool, error) {
 	message, err := c.MessageBroker.ConsumeMessage(constants.BUILD_QUEUE)
 	if err != nil {
-		return models.ImageConfig{}, fmt.Errorf("error consuming message: %s", err)
+		return models.ImageConfig{}, false, fmt.Errorf("error consuming message: %s", err)
+	}
+
+	if message.Body == nil {
+		return models.ImageConfig{}, true, nil
 	}
 
 	var imageConfig models.ImageConfig
 	err = json.Unmarshal(message.Body, &imageConfig)
 	if err != nil {
-		return models.ImageConfig{}, fmt.Errorf("error unmarshalling message: %s", err)
+		return models.ImageConfig{}, false, fmt.Errorf("error unmarshalling message: %s", err)
 	}
 
-	return imageConfig, nil
+	return imageConfig, false, nil
 }
 
 func generateImage(imageConfig models.ImageConfig) {
