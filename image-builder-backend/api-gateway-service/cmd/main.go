@@ -4,7 +4,7 @@ import (
 	"github.com/api-gateway-service/cmd/api"
 	"github.com/api-gateway-service/cmd/logic"
 	"github.com/go-playground/validator/v10"
-	messagebroker "github.com/shared/message-broker"
+	"github.com/shared/messagebroker"
 	"github.com/teris-io/shortid"
 )
 

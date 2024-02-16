@@ -1,10 +1,9 @@
 package logic_test
 
 import (
-	"github.com/image-generator-service/cmd/api"
 	"github.com/image-generator-service/cmd/logic"
-	"github.com/image-generator-service/test/mocks"
-	messagebroker "github.com/shared/message-broker"
+	"github.com/shared/mocks"
+	"github.com/shared/models"
 	"github.com/stretchr/testify/require"
 	"testing"
 )
@@ -12,7 +11,7 @@ import (
 func TestProcessBuildRequestShouldReturnCorrectImageConfig(t *testing.T) {
 	generatorLogic := initGeneratorLogic(&mocks.MockMessageBroker{})
 
-	expectedImageConfig := api.ImageConfig{
+	expectedImageConfig := models.ImageConfig{
 		Architecture: "aarch64-uefi",
 	}
 
@@ -29,7 +28,7 @@ func TestProcessBuildRequestShouldErrorWhenQueueIsEmpty(t *testing.T) {
 	require.NotEqual(t, nil, err)
 }
 
-func initGeneratorLogic(messageBroker messagebroker.MessageBrokerInterface) *logic.GeneratorLogic {
+func initGeneratorLogic(messageBroker models.MessageBrokerInterface) *logic.GeneratorLogic {
 	generatorLogic := &logic.GeneratorLogic{
 		MessageBroker: messageBroker,
 	}

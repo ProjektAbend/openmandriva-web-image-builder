@@ -3,9 +3,10 @@ package api_test
 import (
 	"bytes"
 	"github.com/api-gateway-service/cmd/api"
-	"github.com/api-gateway-service/test/mocks"
 	"github.com/gin-gonic/gin"
 	"github.com/go-playground/validator/v10"
+	"github.com/shared/mocks"
+	"github.com/shared/models"
 	"github.com/stretchr/testify/require"
 	"net/http"
 	"net/http/httptest"
@@ -178,7 +179,7 @@ func TestBuildImageShouldReturn500WhenLogicReturnsError(t *testing.T) {
 	require.Equal(t, http.StatusInternalServerError, response.Code)
 }
 
-func initServer(imageBuilder api.ImageBuilderLogicInterface) *api.GinServer {
+func initServer(imageBuilder models.ImageBuilderLogicInterface) *api.GinServer {
 	validate := validator.New()
 	server := &api.GinServer{
 		ImageBuilderLogic: imageBuilder,
