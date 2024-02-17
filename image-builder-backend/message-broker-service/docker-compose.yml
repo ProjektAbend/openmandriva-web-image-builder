@@ -2,6 +2,7 @@ version: '3'
 
 services:
   rabbitmq:
+    container_name: message-broker-service
     image: "rabbitmq:management"
     ports:
       - "5672:5672"  # RabbitMQ default AMQP port

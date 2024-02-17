@@ -2,7 +2,7 @@ version: '3.8'
 
 services:
   image-generator-service:
+    container_name: image-generator-service
+    image: custom-openmadriva
     build:
-      context: .
       dockerfile: Dockerfile
-    command: sleep infinity
