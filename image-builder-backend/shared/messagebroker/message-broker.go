@@ -13,8 +13,8 @@ type MessageBroker struct {
 	channel    *amqp.Channel
 }
 
-func New() (*MessageBroker, error) {
-	connection, err := amqp.Dial("amqp://admin:admin@localhost:5672/")
+func New(host string) (*MessageBroker, error) {
+	connection, err := amqp.Dial("amqp://admin:admin@" + host + ":5672/")
 	if err != nil {
 		return nil, fmt.Errorf("failed to connect to RabbitMQ: %s", err)
 	}

@@ -6,3 +6,10 @@ services:
     image: custom-openmadriva
     build:
       dockerfile: Dockerfile
+    networks:
+      - my-proxy-net
+
+networks:
+  my-proxy-net:
+    name: giveItANamePlease
+    external: true

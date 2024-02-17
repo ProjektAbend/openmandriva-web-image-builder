@@ -9,7 +9,7 @@ import (
 )
 
 func main() {
-	messageBroker, _ := messagebroker.New()
+	messageBroker, _ := messagebroker.New("localhost")
 	shortIdGenerator, _ := shortid.New(1, shortid.DefaultABC, 2342)
 
 	imageBuilderLogic := &logic.ImageBuilderLogic{

@@ -9,7 +9,7 @@ import (
 func main() {
 	log.Printf("Starting ImageGeneratorService...")
 
-	messageBroker, err := messagebroker.New()
+	messageBroker, err := messagebroker.New("rabbitmq")
 	if err != nil {
 		log.Fatalf("Error trying to instantiate MessageBroker: %s", err)
 	}
