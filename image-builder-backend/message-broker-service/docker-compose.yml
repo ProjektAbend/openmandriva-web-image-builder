@@ -15,5 +15,5 @@ services:
 
 networks:
   some-net:
-    name: giveItANamePlease
+    name: rabbitmq-network
     driver: bridge

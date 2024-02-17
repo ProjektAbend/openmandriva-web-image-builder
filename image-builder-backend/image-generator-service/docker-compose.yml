@@ -6,10 +6,13 @@ services:
     image: custom-openmadriva
     build:
       dockerfile: Dockerfile
+    volumes:
+      - ./build:/app
     networks:
       - my-proxy-net
+    command: ["/app/image-generator-service"]
 
 networks:
   my-proxy-net:
-    name: giveItANamePlease
+    name: rabbitmq-network
     external: true
