@@ -3,7 +3,7 @@ version: '3.8'
 services:
   image-generator-service:
     container_name: image-generator-service
-    image: custom-openmadriva
+    image: custom-openmandriva
     build:
       dockerfile: Dockerfile
     volumes:
