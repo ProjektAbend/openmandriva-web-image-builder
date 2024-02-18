@@ -3,8 +3,10 @@
     <module name="openmandriva-web-image-builder" />
     <target name="WSL - Ubuntu" />
     <working_directory value="$PROJECT_DIR$/image-builder-backend/image-generator-service" />
+    <go_parameters value="-o $PROJECT_DIR$/image-builder-backend/image-generator-service/build/image-generator-service" />
     <parameters value="GOOS=linux GOARCH=amd64" />
     <kind value="DIRECTORY" />
+    <package value="github.com/image-generator-service" />
     <directory value="$PROJECT_DIR$/image-builder-backend/image-generator-service/cmd" />
     <filePath value="$PROJECT_DIR$/../openmandriva-web-image-builder|$PROJECT_DIR$/image-builder-backend/image-generator-service/cmd/main.go" />
     <output_directory value="$PROJECT_DIR$/image-builder-backend/image-generator-service/build" />

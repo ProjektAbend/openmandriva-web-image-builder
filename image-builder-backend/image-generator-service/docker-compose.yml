@@ -10,7 +10,7 @@ services:
       - ./build:/app
     networks:
       - my-proxy-net
-    command: ["/app/build_image_generator_service_linux"]
+    command: ["/app/image-generator-service"]
 
 networks:
   my-proxy-net:
