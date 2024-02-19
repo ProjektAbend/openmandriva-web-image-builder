@@ -25,14 +25,14 @@ paths:
       responses:
         '201':
           description: >
-            A confirmation that the build process has started along with
-            some informations about the image to be build
+            A confirmation that the build process has started along 
+            with the imageId
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/ImageInfo'
-        '503':
-          description: Service has reached maximum capacity
+                $ref: '#/components/schemas/ImageId'
+        '400':
+          description: Invalid ImageConfig Object
           content:
             application/json:
               schema:
@@ -40,9 +40,15 @@ paths:
                 properties:
                   message:
                     type: string
-                    example: >
-                      Service has reached maximum capacity
-                      - Come back later.
+        '500':
+          description: Internal Server Error
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  message:
+                    type: string
   /status/{imageId}:
     get:
       summary: Get status of image
@@ -89,8 +95,12 @@ components:
       required:
         - architecture
       properties:
+        imageId:
+          $ref: '#/components/schemas/ImageId'
         architecture:
           type: string
+          x-oapi-codegen-extra-tags:
+            validate: required
           description: >
             The name of the architecture for which the image is targeted for
           example: 'aarch64-uefi'
@@ -156,17 +166,10 @@ components:
         - UNSUPPORTED
         - RESTRICTED
         - NON-FREE
-    ImageId:
-      type: string
-      pattern: '^[a-zA-Z0-9]{6}$'
-      description: >
-        The unique identifier for the image.
-        It is randomly generated
-      example: 'a1b2c3'
     ImageInfo:
       type: object
       required:
-        - name
+        - imageId
       properties:
         imageId:
           $ref: '#/components/schemas/ImageId'
@@ -180,5 +183,11 @@ components:
           description: >
             The date and time until which the image is available.
             An image is available for download for 24 hours
-            after beeing generated
+            after being generated
           example: "2023-08-15T12:34:56Z"
+    ImageId:
+      type: string
+      description: >
+        The unique identifier for the image.
+        It is randomly generated
+      example: 'WZ3h633-p'

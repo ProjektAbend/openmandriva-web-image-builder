@@ -2,6 +2,8 @@ package api
 
 import (
 	"github.com/gin-gonic/gin"
+	"github.com/go-playground/validator/v10"
+	"log"
 	"net"
 	"net/http"
 )
@@ -11,18 +13,41 @@ type Error struct {
 	Message string `json:"message"`
 }
 
-type GinServer struct{}
-
-func (s GinServer) BuildImage(c *gin.Context) {
-	// TODO: implement
+type ImageBuilderLogic interface {
+	BuildImage(imageConfig ImageConfig) (ImageId, error)
 }
 
-func (s GinServer) GetImageById(c *gin.Context, imageId ImageId) {
-	// TODO: implement
+type GinServer struct {
+	ImageBuilderLogic ImageBuilderLogic
+	Validate          *validator.Validate
 }
 
-func (s GinServer) GetStatusOfImageById(c *gin.Context, imageId ImageId) {
-	// TODO: implement
+func (s GinServer) BuildImage(context *gin.Context) {
+	var imageConfig ImageConfig
+	if err := context.BindJSON(&imageConfig); err != nil {
+		return
+	}
+
+	if err := s.Validate.Struct(imageConfig); err != nil {
+		sendError(context, http.StatusBadRequest, err.Error())
+		return
+	}
+
+	imageId, err := s.ImageBuilderLogic.BuildImage(imageConfig)
+	if err != nil {
+		log.Printf("Error in BuildImage: %s", err)
+		sendError(context, http.StatusInternalServerError, "Failed to build the image")
+		return
+	}
+	context.JSON(http.StatusCreated, gin.H{"imageId": imageId})
+}
+
+func (s GinServer) GetImageById(context *gin.Context, imageId ImageId) {
+	context.Status(http.StatusNotImplemented)
+}
+
+func (s GinServer) GetStatusOfImageById(context *gin.Context, imageId ImageId) {
+	context.Status(http.StatusNotImplemented)
 }
 
 func sendError(c *gin.Context, code int, message string) {
@@ -33,12 +58,20 @@ func sendError(c *gin.Context, code int, message string) {
 	c.JSON(code, err)
 }
 
-func StartServer() {
-	r := gin.Default()
-	RegisterHandlers(r, GinServer{})
+func StartServer(imageBuilder ImageBuilderLogic, validate *validator.Validate) {
+	route := gin.Default()
+	server := &GinServer{
+		ImageBuilderLogic: imageBuilder,
+		Validate:          validate,
+	}
+	RegisterHandlers(route, server)
+
 	s := &http.Server{
-		Handler: r,
+		Handler: route,
 		Addr:    net.JoinHostPort("0.0.0.0", "8080"),
 	}
-	s.ListenAndServe()
+
+	if err := s.ListenAndServe(); err != nil {
+		log.Printf("Error starting Server: %s", err)
+	}
 }
