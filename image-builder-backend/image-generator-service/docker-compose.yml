@@ -8,6 +8,7 @@ services:
       dockerfile: Dockerfile
     volumes:
       - ./build:/app
+      - ./generated-images:/os-image-builder/results
     networks:
       - my-proxy-net
     command: ["/app/image-generator-service"]

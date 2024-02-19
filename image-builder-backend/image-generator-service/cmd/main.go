@@ -14,8 +14,11 @@ func main() {
 		log.Fatalf("Error trying to instantiate MessageBroker: %s", err)
 	}
 
+	commandHandler := &logic.CommandHandler{}
+
 	generatorLogic := &logic.GeneratorLogic{
-		MessageBroker: messageBroker,
+		MessageBroker:  messageBroker,
+		CommandHandler: commandHandler,
 	}
 
 	generatorLogic.ProcessBuildRequests()

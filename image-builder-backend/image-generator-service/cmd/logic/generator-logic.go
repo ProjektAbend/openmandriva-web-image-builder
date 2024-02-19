@@ -6,12 +6,11 @@ import (
 	"github.com/shared/constants"
 	"github.com/shared/models"
 	"log"
-	"os/exec"
-	"time"
 )
 
 type GeneratorLogic struct {
-	MessageBroker models.MessageBrokerInterface
+	MessageBroker  models.MessageBrokerInterface
+	CommandHandler models.CommandHandlerInterface
 }
 
 func (c *GeneratorLogic) ProcessBuildRequests() {
@@ -21,7 +20,7 @@ func (c *GeneratorLogic) ProcessBuildRequests() {
 			log.Printf("error while consuming message: %s", err)
 		}
 		if !isEmpty {
-			generateImage(imageConfig)
+			c.generateImage(imageConfig)
 		}
 	}
 }
@@ -45,23 +44,10 @@ func (c *GeneratorLogic) ProcessBuildRequest() (models.ImageConfig, bool, error)
 	return imageConfig, false, nil
 }
 
-func generateImage(imageConfig models.ImageConfig) {
+func (c *GeneratorLogic) generateImage(imageConfig models.ImageConfig) {
 	log.Printf("Processing image with ID: %v", *imageConfig.ImageId)
-	output, err := runCommand("./os-image-builder/build", "-h")
+	err := c.CommandHandler.RunCommand("./os-image-builder/build", imageConfig.Architecture)
 	if err != nil {
 		log.Printf("error running command: %s", err)
 	}
-	log.Printf("output: %s", output)
-	time.Sleep(5 * time.Second)
-}
-
-func runCommand(command string, args ...string) (string, error) {
-	cmd := exec.Command(command, args...)
-
-	output, err := cmd.CombinedOutput()
-	if err != nil {
-		return "", err
-	}
-	outputStr := string(output)
-	return outputStr, nil
 }

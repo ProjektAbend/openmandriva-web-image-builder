@@ -10,3 +10,7 @@ type MessageBrokerInterface interface {
 	SendMessageToQueue(message string, queue string) error
 	ConsumeMessage(queue string) (amqp.Delivery, error)
 }
+
+type CommandHandlerInterface interface {
+	RunCommand(_ string, _ ...string) error
+}

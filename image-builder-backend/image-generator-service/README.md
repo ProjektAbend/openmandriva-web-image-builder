@@ -1,35 +1,41 @@
 # ImageGeneratorService - Open Mandriva Web Image Builder
 
 ## About this service
-what does it do
-- reads imageConfig from rabbitmq
-- generates image
-- gives update about progress of the generating image
-- sends image to image storage service
+This service fetches the imageConfigs created by the `api-gateway-service` from RabbitMQ and generates
+the image using [os-image-builder](https://github.com/OpenMandrivaSoftware/os-image-builder/tree/master).
 
-does not run on windows!! it uses os-image-builder
-service runs inside docker, even during development -> open mandriva image
+After generating, the image is passed to the `image-storage-service` in order to be stored and then downloaded by the user.
 
 
 ## How to start the service
+> [!WARNING]  
+> This service does not run locally on Windows
 
-run
+This service is using `os-image-builder` which cannot run on Windows.
+The service is supposed to run inside a Docker Container, even during development.
+
+
+First build an executable for linux which will be started inside the Docker Container:
 ```shell
-    GOOS=linux GOARCH=amd64 go build -o build/image-generator-service cmd/main.go
+GOOS=linux GOARCH=amd64 go build -o build/image-generator-service cmd/main.go
 ```
-it generates an executable for linux which will be started inside the docker container
 
-you could also just run the Makefile:
+Running the Makefile will do the same thing:
 ```shell
 make
 ```
 
 After that, start the docker container:
 ```shell
-  docker-compose up
+docker-compose up -d
 ```
+This will create a Docker Container based on the image which is defined in `Dockerfile`.
+Before starting, the executable `build/image-generator-service` will be copied inside the container by mounting
+the /build directory.
 
-If you use intelliJ you can use this run configuration instead of the steps above:
-`start docker image-generator-service`. This will build the code and start the docker container
+If you make changes to your code just repeat the steps above.
 
-If you make changes to the code, just re-run this run configuration or follow the steps above.
+### Easy Start in GoLand
+If you use GoLand you can use this run configuration instead of the steps above:
+`start docker image-generator-service`. This will build the code and start the docker container automatically.
+If you make changes to the code, just re-run this run configuration.

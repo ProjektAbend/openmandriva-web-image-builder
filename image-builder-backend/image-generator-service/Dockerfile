@@ -1,4 +1,4 @@
-FROM openmandriva/4.2
+FROM openmandriva/cooker
 
 RUN dnf install -y git
 

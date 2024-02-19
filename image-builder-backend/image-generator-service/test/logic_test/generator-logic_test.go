@@ -40,8 +40,10 @@ func TestProcessBuildRequestShouldReturnTrueWhenQueueIsEmpty(t *testing.T) {
 }
 
 func initGeneratorLogic(messageBroker models.MessageBrokerInterface) *logic.GeneratorLogic {
+	commandHandler := &mocks.MockCommandHandler{}
 	generatorLogic := &logic.GeneratorLogic{
-		MessageBroker: messageBroker,
+		MessageBroker:  messageBroker,
+		CommandHandler: commandHandler,
 	}
 	return generatorLogic
 }
