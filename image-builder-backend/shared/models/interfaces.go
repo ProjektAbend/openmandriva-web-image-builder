@@ -12,5 +12,5 @@ type MessageBrokerInterface interface {
 }
 
 type CommandHandlerInterface interface {
-	RunCommand(_ string, _ ...string) error
+	GenerateImage(imageConfig ImageConfig) error
 }

@@ -20,7 +20,10 @@ func (c *GeneratorLogic) ProcessBuildRequests() {
 			log.Printf("error while consuming message: %s", err)
 		}
 		if !isEmpty {
-			c.generateImage(imageConfig)
+			err = c.CommandHandler.GenerateImage(imageConfig)
+			if err != nil {
+				log.Printf("error while generating image: %s", err)
+			}
 		}
 	}
 }
@@ -42,12 +45,4 @@ func (c *GeneratorLogic) ProcessBuildRequest() (models.ImageConfig, bool, error)
 	}
 
 	return imageConfig, false, nil
-}
-
-func (c *GeneratorLogic) generateImage(imageConfig models.ImageConfig) {
-	log.Printf("Processing image with ID: %v", *imageConfig.ImageId)
-	err := c.CommandHandler.RunCommand("./os-image-builder/build", imageConfig.Architecture)
-	if err != nil {
-		log.Printf("error running command: %s", err)
-	}
 }
