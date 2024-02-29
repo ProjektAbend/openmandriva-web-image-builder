@@ -2,4 +2,6 @@ FROM openmandriva/cooker
 
 RUN dnf install -y git
 
-RUN git clone https://github.com/OpenMandrivaSoftware/os-image-builder.git /os-image-builder
+RUN dnf install -y timezone
+
+RUN git clone https://github.com/omginput/os-image-builder.git /os-image-builder

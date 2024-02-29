@@ -9,10 +9,26 @@ After generating, the image is passed to the `image-storage-service` in order to
 
 ## How to start the service
 > [!WARNING]  
-> This service does not run locally on Windows
+> You have to run this service with `--mock` in order to run it on windows
 
 This service is using `os-image-builder` which cannot run on Windows.
+Run the service in `MOCK MODE` to use it on Windows.
+
+
+### Run in MOCK MODE
+Run this service in MOCK MODE with this:
+```shell
+go run cmd/main.go --mock
+```
+With `--mock` it will create a fake .iso file instead of using the real `os-image-builder`.
+If you use GoLand you can use this run configuration instead of the command above:
+`start mock image-generator-service`.
+
+
+### Run the real thing
+You can run the real thing if you develop on a Linux system.
 The service is supposed to run inside a Docker Container, even during development.
+Inside the Docker Container, the `os-image-builder` is automatically installed.
 
 
 First build an executable for linux which will be started inside the Docker Container:
@@ -35,7 +51,6 @@ the /build directory.
 
 If you make changes to your code just repeat the steps above.
 
-### Easy Start in GoLand
 If you use GoLand you can use this run configuration instead of the steps above:
 `start docker image-generator-service`. This will build the code and start the docker container automatically.
 If you make changes to the code, just re-run this run configuration.

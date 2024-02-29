@@ -9,8 +9,11 @@ services:
     volumes:
       - ./build:/app
       - ./generated-images:/os-image-builder/results
+    environment:
+      - RABBIT_MQ_HOST=rabbitmq
     networks:
       - my-proxy-net
+    privileged: true
     command: ["/app/image-generator-service"]
 
 networks:

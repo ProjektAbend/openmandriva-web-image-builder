@@ -2,6 +2,7 @@ package main
 
 import (
 	"github.com/image-generator-service/cmd/logic"
+	"github.com/shared/constants"
 	"github.com/shared/messagebroker"
 	"github.com/shared/mocks"
 	"github.com/shared/models"
@@ -12,7 +13,7 @@ import (
 func main() {
 	log.Printf("Starting ImageGeneratorService...")
 
-	messageBroker, err := messagebroker.New("localhost")
+	messageBroker, err := messagebroker.New(getMessageBrokerHost())
 	if err != nil {
 		log.Fatalf("Error trying to instantiate MessageBroker: %s", err)
 	}
@@ -30,6 +31,14 @@ func main() {
 	}
 
 	generatorLogic.ProcessBuildRequests()
+}
+
+func getMessageBrokerHost() string {
+	envVariable := os.Getenv("RABBIT_MQ_HOST")
+	if envVariable == "" {
+		return constants.LOCAL_HOST
+	}
+	return envVariable
 }
 
 func useMocks() bool {
