@@ -3,27 +3,24 @@ package api
 import (
 	"github.com/gin-gonic/gin"
 	"github.com/go-playground/validator/v10"
+	"github.com/shared/models"
 	"log"
 	"net"
 	"net/http"
 )
+
+type GinServer struct {
+	ImageBuilderLogic models.ImageBuilderLogicInterface
+	Validate          *validator.Validate
+}
 
 type Error struct {
 	Code    int32  `json:"code"`
 	Message string `json:"message"`
 }
 
-type ImageBuilderLogic interface {
-	BuildImage(imageConfig ImageConfig) (ImageId, error)
-}
-
-type GinServer struct {
-	ImageBuilderLogic ImageBuilderLogic
-	Validate          *validator.Validate
-}
-
 func (s GinServer) BuildImage(context *gin.Context) {
-	var imageConfig ImageConfig
+	var imageConfig models.ImageConfig
 	if err := context.BindJSON(&imageConfig); err != nil {
 		return
 	}
@@ -42,11 +39,11 @@ func (s GinServer) BuildImage(context *gin.Context) {
 	context.JSON(http.StatusCreated, gin.H{"imageId": imageId})
 }
 
-func (s GinServer) GetImageById(context *gin.Context, imageId ImageId) {
+func (s GinServer) GetImageById(context *gin.Context, _ models.ImageId) {
 	context.Status(http.StatusNotImplemented)
 }
 
-func (s GinServer) GetStatusOfImageById(context *gin.Context, imageId ImageId) {
+func (s GinServer) GetStatusOfImageById(context *gin.Context, _ models.ImageId) {
 	context.Status(http.StatusNotImplemented)
 }
 
@@ -58,7 +55,7 @@ func sendError(c *gin.Context, code int, message string) {
 	c.JSON(code, err)
 }
 
-func StartServer(imageBuilder ImageBuilderLogic, validate *validator.Validate) {
+func StartServer(imageBuilder models.ImageBuilderLogicInterface, validate *validator.Validate) {
 	route := gin.Default()
 	server := &GinServer{
 		ImageBuilderLogic: imageBuilder,

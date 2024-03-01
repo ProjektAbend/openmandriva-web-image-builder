@@ -1,0 +1,12 @@
+<component name="ProjectRunConfigurationManager">
+  <configuration default="false" name="start mock image-generator-service" type="GoApplicationRunConfiguration" factoryName="Go Application">
+    <module name="openmandriva-web-image-builder" />
+    <working_directory value="$PROJECT_DIR$/image-builder-backend/image-generator-service" />
+    <parameters value="--mock" />
+    <kind value="FILE" />
+    <package value="github.com/image-generator-service/cmd" />
+    <directory value="$PROJECT_DIR$" />
+    <filePath value="$PROJECT_DIR$/image-builder-backend/image-generator-service/cmd/main.go" />
+    <method v="2" />
+  </configuration>
+</component>

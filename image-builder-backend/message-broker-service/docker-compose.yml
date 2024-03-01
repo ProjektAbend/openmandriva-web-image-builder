@@ -1,7 +1,8 @@
-version: '3'
+version: '3.8'
 
 services:
   rabbitmq:
+    container_name: message-broker-service
     image: "rabbitmq:management"
     ports:
       - "5672:5672"  # RabbitMQ default AMQP port
@@ -9,3 +10,10 @@ services:
     environment:
       RABBITMQ_DEFAULT_USER: admin
       RABBITMQ_DEFAULT_PASS: admin
+    networks:
+      - some-net
+
+networks:
+  some-net:
+    name: rabbitmq-network
+    driver: bridge

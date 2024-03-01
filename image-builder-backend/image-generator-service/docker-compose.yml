@@ -1,0 +1,22 @@
+version: '3.8'
+
+services:
+  image-generator-service:
+    container_name: image-generator-service
+    image: custom-openmandriva
+    build:
+      dockerfile: Dockerfile
+    volumes:
+      - ./build:/app
+      - ./generated-images:/os-image-builder/results
+    environment:
+      - RABBIT_MQ_HOST=rabbitmq
+    networks:
+      - my-proxy-net
+    privileged: true
+    command: ["/app/image-generator-service"]
+
+networks:
+  my-proxy-net:
+    name: rabbitmq-network
+    external: true

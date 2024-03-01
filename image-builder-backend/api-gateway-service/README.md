@@ -18,9 +18,7 @@ In this directory, just run:
 ```shell
 make
 ```
-after that you should see two new `.go` files inside _/cmd/api_:
-- interface.gen.go
-- types.gen.go
+after that you should see a new `.go` file inside _/cmd/api_: `interface.gen.go`
 
 ### Start server
 When the API controller is generated, the server can be started:
