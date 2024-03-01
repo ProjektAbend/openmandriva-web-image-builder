@@ -10,7 +10,7 @@ services:
       - ./build:/app
       - ./generated-images:/os-image-builder/results
     environment:
-      - RABBIT_MQ_HOST=rabbitmq
+      - RABBIT_MQ_HOST=rabbitmq   # This should be the name of the service running rabbitmq inside the docker-compose
     networks:
       - my-proxy-net
     privileged: true
