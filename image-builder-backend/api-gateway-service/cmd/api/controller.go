@@ -26,6 +26,7 @@ func (s GinServer) BuildImage(context *gin.Context) {
 	}
 
 	if err := s.Validate.Struct(imageConfig); err != nil {
+		log.Printf("Error validating imageConfig: %s", err)
 		sendError(context, http.StatusBadRequest, err.Error())
 		return
 	}
@@ -43,8 +44,14 @@ func (s GinServer) GetImageById(context *gin.Context, _ models.ImageId) {
 	context.Status(http.StatusNotImplemented)
 }
 
-func (s GinServer) GetStatusOfImageById(context *gin.Context, _ models.ImageId) {
-	context.Status(http.StatusNotImplemented)
+func (s GinServer) GetStatusOfImageById(context *gin.Context, imageId models.ImageId) {
+	imageInfo, err := s.ImageBuilderLogic.GetStatusOfImage(imageId)
+	if err != nil {
+		log.Printf("Failed to retrieve status of %s: %s", imageId, err)
+		sendError(context, http.StatusInternalServerError, "Failed to retrieve status")
+		return
+	}
+	context.JSON(http.StatusOK, imageInfo)
 }
 
 func sendError(c *gin.Context, code int, message string) {

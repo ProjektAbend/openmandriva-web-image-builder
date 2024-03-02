@@ -69,6 +69,15 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/ImageInfo'
+        '500':
+          description: Internal Server Error
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  message:
+                    type: string
   /image/{imageId}:
     get:
       summary: Gets an image by its ID

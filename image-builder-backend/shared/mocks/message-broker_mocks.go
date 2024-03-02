@@ -11,6 +11,10 @@ func (_ *MockMessageBroker) SendMessageToQueue(_ string, _ string) error {
 	return nil
 }
 
+func (_ *MockMessageBroker) SendMessageToExchange(_ string, _ string, _ string) error {
+	return nil
+}
+
 func (_ *MockMessageBroker) ConsumeMessage(_ string) (amqp.Delivery, error) {
 	return amqp.Delivery{
 		Body: []byte(`{
@@ -25,6 +29,10 @@ func (_ *MockMessageBrokerReturnsError) SendMessageToQueue(_ string, _ string) e
 	return fmt.Errorf("error occurred")
 }
 
+func (_ *MockMessageBrokerReturnsError) SendMessageToExchange(_ string, _ string, _ string) error {
+	return nil
+}
+
 func (_ *MockMessageBrokerReturnsError) ConsumeMessage(_ string) (amqp.Delivery, error) {
 	return amqp.Delivery{}, fmt.Errorf("error occurred")
 }
@@ -32,6 +40,10 @@ func (_ *MockMessageBrokerReturnsError) ConsumeMessage(_ string) (amqp.Delivery,
 type MockMessageBrokerHasEmptyQueue struct{}
 
 func (_ *MockMessageBrokerHasEmptyQueue) SendMessageToQueue(_ string, _ string) error {
+	return nil
+}
+
+func (_ *MockMessageBrokerHasEmptyQueue) SendMessageToExchange(_ string, _ string, _ string) error {
 	return nil
 }
 

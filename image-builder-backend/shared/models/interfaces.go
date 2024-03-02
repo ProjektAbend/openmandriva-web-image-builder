@@ -6,12 +6,15 @@ import (
 
 type ImageBuilderLogicInterface interface {
 	BuildImage(imageConfig ImageConfig) (ImageId, error)
+	GetStatusOfImage(imageId ImageId) (ImageInfo, error)
 }
 
 type MessageBrokerInterface interface {
 	SendMessageToQueue(message string, queue string) error
 	SendMessageToExchange(message string, exchangeName string, routingKey string) error
+	CreateAndBindQueueToExchange(queueName string, exchangeName string, routingKey string) error
 	ConsumeMessage(queue string) (amqp.Delivery, error)
+	ConsumeMessages(queue string) ([][]byte, error)
 }
 
 type CommandHandlerInterface interface {

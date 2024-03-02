@@ -12,6 +12,7 @@ type BuildStatusHandler struct {
 }
 
 func (c *BuildStatusHandler) SetStatusOfImageBuild(imageId models.ImageId, status models.ImageProcessingStatus) {
+	log.Printf("set status of %s to %s", imageId, status)
 	imageBuildStatus := &models.ImageBuildStatus{
 		ImageId: imageId,
 		Status:  status,
