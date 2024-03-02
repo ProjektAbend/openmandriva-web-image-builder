@@ -15,7 +15,7 @@ func TestProcessBuildRequestShouldReturnCorrectImageConfig(t *testing.T) {
 		Architecture: "aarch64-uefi",
 	}
 
-	actualImageConfig, isEmpty, _ := generatorLogic.ProcessBuildRequest()
+	actualImageConfig, isEmpty, _ := generatorLogic.GetImageConfig()
 
 	require.False(t, isEmpty)
 	require.Equal(t, expectedImageConfig, actualImageConfig)
@@ -24,7 +24,7 @@ func TestProcessBuildRequestShouldReturnCorrectImageConfig(t *testing.T) {
 func TestProcessBuildRequestShouldErrorWhenMessageBrokerErrors(t *testing.T) {
 	generatorLogic := initGeneratorLogic(&mocks.MockMessageBrokerReturnsError{})
 
-	_, isEmpty, err := generatorLogic.ProcessBuildRequest()
+	_, isEmpty, err := generatorLogic.GetImageConfig()
 
 	require.NotEqual(t, nil, err)
 	require.False(t, isEmpty)
@@ -33,7 +33,7 @@ func TestProcessBuildRequestShouldErrorWhenMessageBrokerErrors(t *testing.T) {
 func TestProcessBuildRequestShouldReturnTrueWhenQueueIsEmpty(t *testing.T) {
 	generatorLogic := initGeneratorLogic(&mocks.MockMessageBrokerHasEmptyQueue{})
 
-	_, isEmpty, err := generatorLogic.ProcessBuildRequest()
+	_, isEmpty, err := generatorLogic.GetImageConfig()
 
 	require.Equal(t, nil, err)
 	require.True(t, isEmpty)

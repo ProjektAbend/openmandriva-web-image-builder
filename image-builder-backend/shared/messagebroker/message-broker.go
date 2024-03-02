@@ -28,7 +28,12 @@ func New(host string) (*MessageBroker, error) {
 		return nil, fmt.Errorf("failed to open a channel: %s", err)
 	}
 
-	err = declareQueue(constants.BUILD_QUEUE, channel)
+	err = declareQueue(constants.QUEUE_BUILD, channel)
+	if err != nil {
+		return nil, err
+	}
+
+	err = declareExchange(constants.EXCHANGE_STATUS, "direct", channel)
 	if err != nil {
 		return nil, err
 	}
@@ -51,17 +56,52 @@ func declareQueue(name string, channel *amqp.Channel) error {
 	if err != nil {
 		return fmt.Errorf("error declaring queue: %s", err)
 	}
-
 	return nil
 }
 
-func (c *MessageBroker) SendMessageToQueue(message string, queue string) error {
+func declareExchange(name string, exchangeType string, channel *amqp.Channel) error {
+	err := channel.ExchangeDeclare(
+		name,
+		exchangeType,
+		false,
+		false,
+		false,
+		false,
+		nil,
+	)
+	if err != nil {
+		return fmt.Errorf("error declaring exchange: %s", err)
+	}
+	return nil
+}
+
+func (c *MessageBroker) SendMessageToQueue(message string, queueName string) error {
 	ctx, cancel := context.WithTimeout(context.Background(), 5*time.Second)
 	defer cancel()
 
 	err := c.channel.PublishWithContext(ctx,
 		"",
-		queue,
+		queueName,
+		false,
+		false,
+		amqp.Publishing{
+			ContentType: "text/plain",
+			Body:        []byte(message),
+		})
+	if err != nil {
+		return fmt.Errorf("failed to publish a message: %s", err)
+	}
+
+	return nil
+}
+
+func (c *MessageBroker) SendMessageToExchange(message string, exchangeName string, routingKey string) error {
+	ctx, cancel := context.WithTimeout(context.Background(), 5*time.Second)
+	defer cancel()
+
+	err := c.channel.PublishWithContext(ctx,
+		exchangeName,
+		routingKey,
 		false,
 		false,
 		amqp.Publishing{
