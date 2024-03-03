@@ -5,9 +5,9 @@ import (
 	"fmt"
 	"github.com/shared/constants"
 	"github.com/shared/models"
+	"github.com/shared/status"
 	"github.com/teris-io/shortid"
 	"log"
-	"math"
 )
 
 type ImageBuilderLogic struct {
@@ -24,16 +24,16 @@ func (c *ImageBuilderLogic) BuildImage(imageConfig models.ImageConfig) (models.I
 
 	imageConfig.ImageId = &imageId
 
+	err = c.MessageBroker.CreateAndBindQueueToExchange(imageId, constants.EXCHANGE_STATUS, imageId)
+	if err != nil {
+		return "", err
+	}
+
 	c.BuildStatusHandler.SetStatusOfImageBuild(imageId, models.REQUESTED)
 
 	jsonData, err := json.Marshal(imageConfig)
 	if err != nil {
 		return "", fmt.Errorf("error marshalling JSON %s", err)
-	}
-
-	err = c.MessageBroker.CreateAndBindQueueToExchange(imageId, constants.EXCHANGE_STATUS, imageId)
-	if err != nil {
-		return "", err
 	}
 
 	if err := c.MessageBroker.SendMessageToQueue(string(jsonData), constants.QUEUE_BUILD); err != nil {
@@ -54,23 +54,19 @@ func (c *ImageBuilderLogic) generateImageId() (models.ImageId, error) {
 }
 
 func (c *ImageBuilderLogic) GetStatusOfImage(imageId models.ImageId) (models.ImageInfo, error) {
-	messages, err := c.MessageBroker.ConsumeMessages(imageId)
-	if err != nil {
-		return models.ImageInfo{}, fmt.Errorf("error consuming messages: %s", err)
-	}
+	messages, err := c.getEveryMessageInsideStatusQueue(imageId)
 
-	var imageBuildStatuses []models.ImageBuildStatus
+	var imageBuildStatuses []status.ImageBuildStatus
 
-	for _, m := range messages {
-		var imageBuildStatus models.ImageBuildStatus
-		err = json.Unmarshal(m, &imageBuildStatus)
+	for _, message := range messages {
+		var imageBuildStatus status.ImageBuildStatus
+		err = json.Unmarshal(message, &imageBuildStatus)
 		if err != nil {
 			return models.ImageInfo{}, fmt.Errorf("error unmarshalling message: %s", err)
 		}
 		imageBuildStatuses = append(imageBuildStatuses, imageBuildStatus)
 	}
 
-	// TODO: integrate latestStatus into imageInfo for a more fine grained status
 	latestStatus := findLatestStatus(imageBuildStatuses)
 	log.Printf("This is the latest status of image %s: %s", imageId, latestStatus)
 
@@ -79,18 +75,41 @@ func (c *ImageBuilderLogic) GetStatusOfImage(imageId models.ImageId) (models.Ima
 	imageInfo := models.ImageInfo{
 		AvailableUntil: nil,
 		ImageId:        imageId,
+		Status:         &latestStatus,
 		IsAvailable:    &isAvailable,
 	}
 
 	return imageInfo, nil
 }
 
-func findLatestStatus(statuses []models.ImageBuildStatus) models.ImageProcessingStatus {
-	latestStatus := models.ImageProcessingStatus(math.MinInt32)
-	for _, status := range statuses {
-		if status.Status > latestStatus {
-			latestStatus = status.Status
+func (c *ImageBuilderLogic) getEveryMessageInsideStatusQueue(imageId models.ImageId) ([][]byte, error) {
+	var messages [][]byte
+	for {
+		message, err := c.MessageBroker.ConsumeMessage(imageId)
+		if err != nil {
+			return nil, fmt.Errorf("error consuming message from status queue: %s", err)
+		}
+		if message.Body != nil {
+			messages = append(messages, message.Body)
+		} else {
+			break
 		}
 	}
-	return latestStatus
+	return messages, nil
+}
+
+func findLatestStatus(imageBuildStatuses []status.ImageBuildStatus) models.ProcessingStatus {
+	maxStatus := models.REQUESTED
+	maxValue := 0
+
+	for _, s := range imageBuildStatuses {
+		if val, ok := status.Sequence[s.Status]; ok {
+			if val > maxValue {
+				maxValue = val
+				maxStatus = s.Status
+			}
+		}
+	}
+
+	return maxStatus
 }

@@ -93,34 +93,6 @@ func (c *MessageBroker) ConsumeMessage(queue string) (amqp.Delivery, error) {
 	return message, nil
 }
 
-func (c *MessageBroker) ConsumeMessages(queue string) ([][]byte, error) {
-	messages, err := c.channel.Consume(
-		queue,
-		"",
-		true,
-		false,
-		false,
-		false,
-		nil,
-	)
-	if err != nil {
-		return nil, err
-	}
-
-	var consumedMessages [][]byte
-	for {
-		select {
-		case d, ok := <-messages:
-			if !ok {
-				return consumedMessages, nil
-			}
-			consumedMessages = append(consumedMessages, d.Body)
-		default:
-			return consumedMessages, nil
-		}
-	}
-}
-
 func (c *MessageBroker) CreateAndBindQueueToExchange(queueName string, exchangeName string, routingKey string) error {
 	err := declareQueue(queueName, c.channel)
 	if err != nil {

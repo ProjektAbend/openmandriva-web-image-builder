@@ -21,13 +21,13 @@ func (c *GeneratorLogic) ProcessBuildRequests() {
 			log.Printf("error while consuming message: %s", err)
 		}
 		if !isEmpty {
-			c.BuildStatusHandler.SetStatusOfImageBuild(*imageConfig.ImageId, models.BUILD_STARTED)
+			c.BuildStatusHandler.SetStatusOfImageBuild(*imageConfig.ImageId, models.BUILDSTARTED)
 			err = c.CommandHandler.GenerateImage(imageConfig)
 			if err != nil {
-				c.BuildStatusHandler.SetStatusOfImageBuild(*imageConfig.ImageId, models.BUILD_FAILED)
+				c.BuildStatusHandler.SetStatusOfImageBuild(*imageConfig.ImageId, models.BUILDFAILED)
 				log.Printf("error while generating image: %s", err)
 			}
-			c.BuildStatusHandler.SetStatusOfImageBuild(*imageConfig.ImageId, models.BUILD_FINISHED)
+			c.BuildStatusHandler.SetStatusOfImageBuild(*imageConfig.ImageId, models.BUILDFINISHED)
 		}
 	}
 }

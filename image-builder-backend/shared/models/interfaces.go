@@ -14,7 +14,6 @@ type MessageBrokerInterface interface {
 	SendMessageToExchange(message string, exchangeName string, routingKey string) error
 	CreateAndBindQueueToExchange(queueName string, exchangeName string, routingKey string) error
 	ConsumeMessage(queue string) (amqp.Delivery, error)
-	ConsumeMessages(queue string) ([][]byte, error)
 }
 
 type CommandHandlerInterface interface {
@@ -22,5 +21,5 @@ type CommandHandlerInterface interface {
 }
 
 type BuildStatusHandlerInterface interface {
-	SetStatusOfImageBuild(imageId ImageId, status ImageProcessingStatus)
+	SetStatusOfImageBuild(imageId ImageId, status ProcessingStatus)
 }

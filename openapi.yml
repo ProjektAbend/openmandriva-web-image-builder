@@ -175,6 +175,19 @@ components:
         - UNSUPPORTED
         - RESTRICTED
         - NON-FREE
+    ProcessingStatus:
+      type: string
+      enum:
+        - REQUESTED
+        - ACCEPTED
+        - FETCHED
+        - BUILD_STARTED
+        - BUILD_FAILED
+        - BUILD_FINISHED
+        - UPLOAD_STARTED
+        - UPLOAD_FAILED
+        - AVAILABLE
+        - EXPIRED
     ImageInfo:
       type: object
       required:
@@ -183,9 +196,12 @@ components:
         imageId:
           $ref: '#/components/schemas/ImageId'
         isAvailable:
+          deprecated: true
           type: boolean
           description: Indicates whether the image is available to download
           example: true
+        status:
+          $ref: '#/components/schemas/ProcessingStatus'
         availableUntil:
           type: string
           format: date-time
