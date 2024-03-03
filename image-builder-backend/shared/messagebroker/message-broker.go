@@ -93,6 +93,33 @@ func (c *MessageBroker) ConsumeMessage(queue string) (amqp.Delivery, error) {
 	return message, nil
 }
 
+func (c *MessageBroker) CopyEveryMessageInsideStatusQueue(queue string) ([][]byte, error) {
+	channel, _ := c.connection.Channel()
+	var messages [][]byte
+	for {
+		message, err := consumeMessageNoAck(queue, channel)
+		if err != nil {
+			return nil, fmt.Errorf("error consuming message from status queue: %s", err)
+		}
+		if message.Body != nil {
+			messages = append(messages, message.Body)
+		} else {
+			break
+		}
+	}
+	channel.Close()
+	return messages, nil
+}
+
+func consumeMessageNoAck(queue string, channel *amqp.Channel) (amqp.Delivery, error) {
+	message, _, err := channel.Get(queue, false)
+	if err != nil {
+		return amqp.Delivery{}, err
+	}
+
+	return message, nil
+}
+
 func (c *MessageBroker) CreateAndBindQueueToExchange(queueName string, exchangeName string, routingKey string) error {
 	err := declareQueue(queueName, c.channel)
 	if err != nil {

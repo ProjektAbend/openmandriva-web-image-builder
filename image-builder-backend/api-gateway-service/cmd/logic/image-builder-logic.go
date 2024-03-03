@@ -54,7 +54,7 @@ func (c *ImageBuilderLogic) generateImageId() (models.ImageId, error) {
 }
 
 func (c *ImageBuilderLogic) GetStatusOfImage(imageId models.ImageId) (models.ImageInfo, error) {
-	messages, err := c.getEveryMessageInsideStatusQueue(imageId)
+	messages, err := c.MessageBroker.CopyEveryMessageInsideStatusQueue(imageId)
 
 	var imageBuildStatuses []status.ImageBuildStatus
 
@@ -80,22 +80,6 @@ func (c *ImageBuilderLogic) GetStatusOfImage(imageId models.ImageId) (models.Ima
 	}
 
 	return imageInfo, nil
-}
-
-func (c *ImageBuilderLogic) getEveryMessageInsideStatusQueue(imageId models.ImageId) ([][]byte, error) {
-	var messages [][]byte
-	for {
-		message, err := c.MessageBroker.ConsumeMessage(imageId)
-		if err != nil {
-			return nil, fmt.Errorf("error consuming message from status queue: %s", err)
-		}
-		if message.Body != nil {
-			messages = append(messages, message.Body)
-		} else {
-			break
-		}
-	}
-	return messages, nil
 }
 
 func findLatestStatus(imageBuildStatuses []status.ImageBuildStatus) models.ProcessingStatus {
