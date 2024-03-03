@@ -94,7 +94,10 @@ func (c *MessageBroker) ConsumeMessage(queue string) (amqp.Delivery, error) {
 }
 
 func (c *MessageBroker) CopyEveryMessageInsideStatusQueue(queue string) ([][]byte, error) {
-	channel, _ := c.connection.Channel()
+	channel, err := c.connection.Channel()
+	if err != nil {
+		return nil, fmt.Errorf("error opening channel to read status from queue %s: %s", queue, err)
+	}
 	var messages [][]byte
 	for {
 		message, err := consumeMessageNoAck(queue, channel)
@@ -107,17 +110,8 @@ func (c *MessageBroker) CopyEveryMessageInsideStatusQueue(queue string) ([][]byt
 			break
 		}
 	}
-	channel.Close()
+	_ = channel.Close()
 	return messages, nil
-}
-
-func consumeMessageNoAck(queue string, channel *amqp.Channel) (amqp.Delivery, error) {
-	message, _, err := channel.Get(queue, false)
-	if err != nil {
-		return amqp.Delivery{}, err
-	}
-
-	return message, nil
 }
 
 func (c *MessageBroker) CreateAndBindQueueToExchange(queueName string, exchangeName string, routingKey string) error {
@@ -138,6 +132,14 @@ func (c *MessageBroker) CreateAndBindQueueToExchange(queueName string, exchangeN
 	}
 
 	return nil
+}
+
+func consumeMessageNoAck(queue string, channel *amqp.Channel) (amqp.Delivery, error) {
+	message, _, err := channel.Get(queue, false)
+	if err != nil {
+		return amqp.Delivery{}, err
+	}
+	return message, nil
 }
 
 func declareQueue(name string, channel *amqp.Channel) error {

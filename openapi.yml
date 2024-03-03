@@ -175,7 +175,7 @@ components:
         - UNSUPPORTED
         - RESTRICTED
         - NON-FREE
-    ProcessingStatus:
+    Status:
       type: string
       enum:
         - REQUESTED
@@ -195,13 +195,8 @@ components:
       properties:
         imageId:
           $ref: '#/components/schemas/ImageId'
-        isAvailable:
-          deprecated: true
-          type: boolean
-          description: Indicates whether the image is available to download
-          example: true
         status:
-          $ref: '#/components/schemas/ProcessingStatus'
+          $ref: '#/components/schemas/Status'
         availableUntil:
           type: string
           format: date-time

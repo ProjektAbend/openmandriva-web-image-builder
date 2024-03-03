@@ -22,5 +22,5 @@ type CommandHandlerInterface interface {
 }
 
 type BuildStatusHandlerInterface interface {
-	SetStatusOfImageBuild(imageId ImageId, status ProcessingStatus)
+	SetStatusOfImageBuild(imageId ImageId, status Status)
 }

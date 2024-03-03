@@ -55,45 +55,45 @@ func (c *ImageBuilderLogic) generateImageId() (models.ImageId, error) {
 
 func (c *ImageBuilderLogic) GetStatusOfImage(imageId models.ImageId) (models.ImageInfo, error) {
 	messages, err := c.MessageBroker.CopyEveryMessageInsideStatusQueue(imageId)
-
-	var imageBuildStatuses []status.ImageBuildStatus
-
-	for _, message := range messages {
-		var imageBuildStatus status.ImageBuildStatus
-		err = json.Unmarshal(message, &imageBuildStatus)
-		if err != nil {
-			return models.ImageInfo{}, fmt.Errorf("error unmarshalling message: %s", err)
-		}
-		imageBuildStatuses = append(imageBuildStatuses, imageBuildStatus)
+	processingStatuses, err := unmarshalMessages(messages)
+	if err != nil {
+		return models.ImageInfo{}, fmt.Errorf("error unmarshalling message: %s", err)
 	}
-
-	latestStatus := findLatestStatus(imageBuildStatuses)
+	latestStatus := findLatestStatus(processingStatuses)
 	log.Printf("This is the latest status of image %s: %s", imageId, latestStatus)
-
-	isAvailable := latestStatus == models.AVAILABLE
 
 	imageInfo := models.ImageInfo{
 		AvailableUntil: nil,
 		ImageId:        imageId,
 		Status:         &latestStatus,
-		IsAvailable:    &isAvailable,
 	}
 
 	return imageInfo, nil
 }
 
-func findLatestStatus(imageBuildStatuses []status.ImageBuildStatus) models.ProcessingStatus {
+func unmarshalMessages(messages [][]byte) ([]models.Status, error) {
+	var processingStatuses []models.Status
+	for _, message := range messages {
+		var processingStatus models.Status
+		err := json.Unmarshal(message, &processingStatus)
+		if err != nil {
+			return nil, err
+		}
+		processingStatuses = append(processingStatuses, processingStatus)
+	}
+	return processingStatuses, nil
+}
+
+func findLatestStatus(processingStatuses []models.Status) models.Status {
 	maxStatus := models.REQUESTED
 	maxValue := 0
-
-	for _, s := range imageBuildStatuses {
-		if val, ok := status.Sequence[s.Status]; ok {
+	for _, s := range processingStatuses {
+		if val, ok := status.Sequence[s]; ok {
 			if val > maxValue {
 				maxValue = val
-				maxStatus = s.Status
+				maxStatus = s
 			}
 		}
 	}
-
 	return maxStatus
 }

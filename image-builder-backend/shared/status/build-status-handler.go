@@ -7,7 +7,7 @@ import (
 	"log"
 )
 
-var Sequence = map[models.ProcessingStatus]int{
+var Sequence = map[models.Status]int{
 	models.REQUESTED:     1,
 	models.ACCEPTED:      2,
 	models.FETCHED:       3,
@@ -20,23 +20,14 @@ var Sequence = map[models.ProcessingStatus]int{
 	models.EXPIRED:       10,
 }
 
-type ImageBuildStatus struct {
-	ImageId models.ImageId
-	Status  models.ProcessingStatus
-}
-
 type BuildStatusHandler struct {
 	MessageBroker models.MessageBrokerInterface
 }
 
-func (c *BuildStatusHandler) SetStatusOfImageBuild(imageId models.ImageId, status models.ProcessingStatus) {
+func (c *BuildStatusHandler) SetStatusOfImageBuild(imageId models.ImageId, status models.Status) {
 	log.Printf("set status of %s to %s", imageId, status)
-	imageBuildStatus := &ImageBuildStatus{
-		ImageId: imageId,
-		Status:  status,
-	}
 
-	jsonData, err := json.Marshal(imageBuildStatus)
+	jsonData, err := json.Marshal(status)
 	if err != nil {
 		log.Printf("error marshalling JSON %s", err)
 	}
