@@ -28,9 +28,12 @@ func TestBuildImageShouldReturnErrorWhenMessageBrokerFailed(t *testing.T) {
 func initImageBuilderLogic(messageBroker models.MessageBrokerInterface) *logic.ImageBuilderLogic {
 	shortIdGenerator, _ := shortid.New(1, shortid.DefaultABC, 2342)
 
+	buildStatusHandler := &mocks.MockBuildStatusHandler{}
+
 	imageBuilderLogic := &logic.ImageBuilderLogic{
-		MessageBroker:    messageBroker,
-		ShortIdGenerator: shortIdGenerator,
+		MessageBroker:      messageBroker,
+		ShortIdGenerator:   shortIdGenerator,
+		BuildStatusHandler: buildStatusHandler,
 	}
 
 	return imageBuilderLogic

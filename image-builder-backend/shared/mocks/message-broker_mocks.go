@@ -23,6 +23,14 @@ func (_ *MockMessageBroker) ConsumeMessage(_ string) (amqp.Delivery, error) {
 	}, nil
 }
 
+func (_ *MockMessageBroker) CreateAndBindQueueToExchange(_ string, _ string, _ string) error {
+	return nil
+}
+
+func (_ *MockMessageBroker) CopyEveryMessageInsideStatusQueue(_ string) ([][]byte, error) {
+	return nil, nil
+}
+
 type MockMessageBrokerReturnsError struct{}
 
 func (_ *MockMessageBrokerReturnsError) SendMessageToQueue(_ string, _ string) error {
@@ -37,6 +45,14 @@ func (_ *MockMessageBrokerReturnsError) ConsumeMessage(_ string) (amqp.Delivery,
 	return amqp.Delivery{}, fmt.Errorf("error occurred")
 }
 
+func (_ *MockMessageBrokerReturnsError) CreateAndBindQueueToExchange(_ string, _ string, _ string) error {
+	return nil
+}
+
+func (_ *MockMessageBrokerReturnsError) CopyEveryMessageInsideStatusQueue(_ string) ([][]byte, error) {
+	return nil, nil
+}
+
 type MockMessageBrokerHasEmptyQueue struct{}
 
 func (_ *MockMessageBrokerHasEmptyQueue) SendMessageToQueue(_ string, _ string) error {
@@ -49,4 +65,12 @@ func (_ *MockMessageBrokerHasEmptyQueue) SendMessageToExchange(_ string, _ strin
 
 func (_ *MockMessageBrokerHasEmptyQueue) ConsumeMessage(_ string) (amqp.Delivery, error) {
 	return amqp.Delivery{}, nil
+}
+
+func (_ *MockMessageBrokerHasEmptyQueue) CreateAndBindQueueToExchange(_ string, _ string, _ string) error {
+	return nil
+}
+
+func (_ *MockMessageBrokerHasEmptyQueue) CopyEveryMessageInsideStatusQueue(_ string) ([][]byte, error) {
+	return nil, nil
 }

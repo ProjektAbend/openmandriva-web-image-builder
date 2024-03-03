@@ -2,6 +2,7 @@ package api_test
 
 import (
 	"bytes"
+	"fmt"
 	"github.com/api-gateway-service/cmd/api"
 	"github.com/gin-gonic/gin"
 	"github.com/go-playground/validator/v10"
@@ -179,6 +180,42 @@ func TestBuildImageShouldReturn500WhenLogicReturnsError(t *testing.T) {
 	require.Equal(t, http.StatusInternalServerError, response.Code)
 }
 
+func TestGetStatusOfImageByIdShouldReturn200WhenCorrectImageId(t *testing.T) {
+	server := initServer(&mocks.MockImageBuilderLogic{})
+
+	response := sendRequestStatus(t, server, "WZ3h633-p")
+
+	require.Equal(t, http.StatusOK, response.Code)
+}
+
+func TestGetStatusOfImageByIdShouldReturnImageInfoWhenCorrectImageId(t *testing.T) {
+	server := initServer(&mocks.MockImageBuilderLogic{})
+
+	imageId := "WZ3h633-p"
+
+	response := sendRequestStatus(t, server, imageId)
+
+	expectedResponse := fmt.Sprintf(`{
+		"imageId": "%s",
+		"status": "ACCEPTED"
+	}`, imageId)
+
+	actualResponse := response.Body.String()
+
+	require.Equal(t, http.StatusOK, response.Code)
+	require.JSONEq(t, expectedResponse, actualResponse)
+}
+
+func TestGetStatusOfImageByIdShouldReturn500WhenLogicReturnsError(t *testing.T) {
+	server := initServer(&mocks.MockImageBuilderLogicReturnsError{})
+
+	imageId := "WZ3h633-p"
+
+	response := sendRequestStatus(t, server, imageId)
+
+	require.Equal(t, http.StatusInternalServerError, response.Code)
+}
+
 func initServer(imageBuilder models.ImageBuilderLogicInterface) *api.GinServer {
 	validate := validator.New()
 	server := &api.GinServer{
@@ -195,6 +232,26 @@ func sendRequestBuild(t *testing.T, server *api.GinServer, payload string) *http
 	payloadByte := []byte(payload)
 
 	request, err := http.NewRequest("POST", "/whatever", bytes.NewBuffer(payloadByte))
+	if err != nil {
+		t.Errorf("error while sending request")
+	}
+
+	request.Header.Set("Content-Type", "application/json")
+	recorder := httptest.NewRecorder()
+	route.ServeHTTP(recorder, request)
+
+	return recorder
+}
+
+func sendRequestStatus(t *testing.T, server *api.GinServer, imageId string) *httptest.ResponseRecorder {
+	route := gin.Default()
+	route.GET("/status/:imageId", func(c *gin.Context) {
+		server.GetStatusOfImageById(c, c.Param("imageId"))
+	})
+
+	payloadByte := []byte("")
+
+	request, err := http.NewRequest("GET", "/status/"+imageId, bytes.NewBuffer(payloadByte))
 	if err != nil {
 		t.Errorf("error while sending request")
 	}

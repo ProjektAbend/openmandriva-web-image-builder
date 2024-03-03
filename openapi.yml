@@ -69,6 +69,15 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/ImageInfo'
+        '404':
+          description: ImageId not found
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  message:
+                    type: string
         '500':
           description: Internal Server Error
           content:
