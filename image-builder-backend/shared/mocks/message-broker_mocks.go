@@ -1,8 +1,10 @@
 package mocks
 
 import (
+	"encoding/json"
 	"fmt"
 	amqp "github.com/rabbitmq/amqp091-go"
+	"github.com/shared/models"
 )
 
 type MockMessageBroker struct{}
@@ -28,7 +30,12 @@ func (_ *MockMessageBroker) CreateAndBindQueueToExchange(_ string, _ string, _ s
 }
 
 func (_ *MockMessageBroker) CopyEveryMessageInsideStatusQueue(_ string) ([][]byte, error) {
-	return nil, nil
+	var messages [][]byte
+	message1, _ := json.Marshal(models.REQUESTED)
+	message2, _ := json.Marshal(models.ACCEPTED)
+	messages = append(messages, message1)
+	messages = append(messages, message2)
+	return messages, nil
 }
 
 type MockMessageBrokerReturnsError struct{}
@@ -72,5 +79,5 @@ func (_ *MockMessageBrokerHasEmptyQueue) CreateAndBindQueueToExchange(_ string, 
 }
 
 func (_ *MockMessageBrokerHasEmptyQueue) CopyEveryMessageInsideStatusQueue(_ string) ([][]byte, error) {
-	return nil, nil
+	return [][]byte{}, nil
 }

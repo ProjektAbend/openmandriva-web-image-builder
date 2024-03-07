@@ -197,6 +197,7 @@ components:
         - UPLOAD_FAILED
         - AVAILABLE
         - EXPIRED
+        - DOES_NOT_EXIST
     ImageInfo:
       type: object
       required:

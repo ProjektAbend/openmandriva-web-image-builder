@@ -54,12 +54,13 @@ func (c *ImageBuilderLogic) generateImageId() (models.ImageId, error) {
 }
 
 func (c *ImageBuilderLogic) GetStatusOfImage(imageId models.ImageId) (models.ImageInfo, error) {
-	messages, err := c.MessageBroker.CopyEveryMessageInsideStatusQueue(imageId)
+	// TODO: handle error
+	messages, _ := c.MessageBroker.CopyEveryMessageInsideStatusQueue(imageId)
 	processingStatuses, err := unmarshalMessages(messages)
 	if err != nil {
 		return models.ImageInfo{}, fmt.Errorf("error unmarshalling message: %s", err)
 	}
-	latestStatus := findLatestStatus(processingStatuses)
+	latestStatus := FindLatestStatus(processingStatuses)
 	log.Printf("This is the latest status of image %s: %s", imageId, latestStatus)
 
 	imageInfo := models.ImageInfo{
@@ -84,7 +85,11 @@ func unmarshalMessages(messages [][]byte) ([]models.Status, error) {
 	return processingStatuses, nil
 }
 
-func findLatestStatus(processingStatuses []models.Status) models.Status {
+func FindLatestStatus(processingStatuses []models.Status) models.Status {
+	if len(processingStatuses) == 0 {
+		return models.DOESNOTEXIST
+	}
+
 	maxStatus := models.REQUESTED
 	maxValue := 0
 	for _, s := range processingStatuses {

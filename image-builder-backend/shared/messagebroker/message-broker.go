@@ -94,10 +94,21 @@ func (c *MessageBroker) ConsumeMessage(queue string) (amqp.Delivery, error) {
 }
 
 func (c *MessageBroker) CopyEveryMessageInsideStatusQueue(queue string) ([][]byte, error) {
+	/** The messages inside the status queue should only be "copied"
+	thus they should stay in the queue after reading them, so they can be read multiple times.
+	This is achieved by consuming messages with noAck. However, they cannot be read again
+	until the channel is closed and opened again. That's why a new channel is used
+	instead of c.channel
+	*/
 	channel, err := c.connection.Channel()
 	if err != nil {
 		return nil, fmt.Errorf("error opening channel to read status from queue %s: %s", queue, err)
 	}
+
+	if doesQueueExist(queue, channel) {
+		return [][]byte{}, nil
+	}
+
 	var messages [][]byte
 	for {
 		message, err := consumeMessageNoAck(queue, channel)
@@ -132,6 +143,18 @@ func (c *MessageBroker) CreateAndBindQueueToExchange(queueName string, exchangeN
 	}
 
 	return nil
+}
+
+func doesQueueExist(queue string, channel *amqp.Channel) bool {
+	ok, _ := channel.QueueDeclarePassive(
+		queue,
+		false,
+		false,
+		false,
+		false,
+		nil,
+	)
+	return ok.Messages > 0
 }
 
 func consumeMessageNoAck(queue string, channel *amqp.Channel) (amqp.Delivery, error) {
