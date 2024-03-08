@@ -54,12 +54,16 @@ func (c *ImageBuilderLogic) generateImageId() (models.ImageId, error) {
 }
 
 func (c *ImageBuilderLogic) GetStatusOfImage(imageId models.ImageId) (models.ImageInfo, error) {
-	// TODO: handle error
-	messages, _ := c.MessageBroker.CopyEveryMessageInsideStatusQueue(imageId)
+	messages, err := c.MessageBroker.CopyEveryMessageInsideStatusQueue(imageId)
+	if err != nil {
+		return models.ImageInfo{}, fmt.Errorf("error copying messages from status queue: %s", err)
+	}
+
 	processingStatuses, err := unmarshalMessages(messages)
 	if err != nil {
 		return models.ImageInfo{}, fmt.Errorf("error unmarshalling message: %s", err)
 	}
+
 	latestStatus := FindLatestStatus(processingStatuses)
 	log.Printf("This is the latest status of image %s: %s", imageId, latestStatus)
 

@@ -20,7 +20,8 @@ func (_ *MockMessageBroker) SendMessageToExchange(_ string, _ string, _ string) 
 func (_ *MockMessageBroker) ConsumeMessage(_ string) (amqp.Delivery, error) {
 	return amqp.Delivery{
 		Body: []byte(`{
-			"architecture":"aarch64-uefi"
+			"architecture":"aarch64-uefi",
+			"imageId":"WZ3h633-p"
 		}`),
 	}, nil
 }
@@ -57,7 +58,7 @@ func (_ *MockMessageBrokerReturnsError) CreateAndBindQueueToExchange(_ string, _
 }
 
 func (_ *MockMessageBrokerReturnsError) CopyEveryMessageInsideStatusQueue(_ string) ([][]byte, error) {
-	return nil, nil
+	return nil, fmt.Errorf("error occurred")
 }
 
 type MockMessageBrokerHasEmptyQueue struct{}

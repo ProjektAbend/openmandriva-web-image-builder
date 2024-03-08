@@ -1,4 +1,4 @@
-package logic_test
+package logic
 
 import (
 	"github.com/image-generator-service/cmd/logic"
@@ -11,8 +11,10 @@ import (
 func TestProcessBuildRequestShouldReturnCorrectImageConfig(t *testing.T) {
 	generatorLogic := initGeneratorLogic(&mocks.MockMessageBroker{})
 
+	imageId := "WZ3h633-p"
 	expectedImageConfig := models.ImageConfig{
 		Architecture: "aarch64-uefi",
+		ImageId:      &imageId,
 	}
 
 	actualImageConfig, isEmpty, _ := generatorLogic.GetImageConfig()
@@ -41,9 +43,11 @@ func TestProcessBuildRequestShouldReturnTrueWhenQueueIsEmpty(t *testing.T) {
 
 func initGeneratorLogic(messageBroker models.MessageBrokerInterface) *logic.GeneratorLogic {
 	commandHandler := &mocks.MockCommandHandler{}
+	buildStatusHandler := &mocks.MockBuildStatusHandler{}
 	generatorLogic := &logic.GeneratorLogic{
-		MessageBroker:  messageBroker,
-		CommandHandler: commandHandler,
+		MessageBroker:      messageBroker,
+		CommandHandler:     commandHandler,
+		BuildStatusHandler: buildStatusHandler,
 	}
 	return generatorLogic
 }
