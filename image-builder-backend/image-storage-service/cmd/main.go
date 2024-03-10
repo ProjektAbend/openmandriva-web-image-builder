@@ -9,6 +9,8 @@ import (
 func main() {
 	log.Printf("Starting ImageStorageService...")
 
+	go logic.DeleteExpiredFilesAndMetaData()
+
 	imageStorageLogic := &logic.ImageStorageLogic{}
 	api.StartServer(imageStorageLogic)
 }

@@ -8,10 +8,14 @@ import (
 	"path/filepath"
 )
 
+const (
+	FILES_DIR = "./files"
+)
+
 type ImageStorageLogic struct{}
 
 func (c *ImageStorageLogic) StoreImage(file multipart.File, fileName string) error {
-	destPath := filepath.Join("./files", fileName)
+	destPath := filepath.Join(FILES_DIR, fileName)
 	destFile, err := os.Create(destPath)
 	if err != nil {
 		return fmt.Errorf("error creating file: %s", err.Error())
@@ -32,7 +36,7 @@ func (c *ImageStorageLogic) StoreImage(file multipart.File, fileName string) err
 }
 
 func (c *ImageStorageLogic) GetIsoFile(fileName string) (string, error) {
-	return filepath.Join("./files", fileName), nil
+	return filepath.Join(FILES_DIR, fileName), nil
 }
 
 func (c *ImageStorageLogic) DoesFileExist(filePath string) bool {
