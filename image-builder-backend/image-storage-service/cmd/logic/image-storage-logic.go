@@ -10,8 +10,8 @@ import (
 
 type ImageStorageLogic struct{}
 
-func (c *ImageStorageLogic) StoreImage(file multipart.File, filename string) error {
-	destPath := filepath.Join("./files", filename)
+func (c *ImageStorageLogic) StoreImage(file multipart.File, fileName string) error {
+	destPath := filepath.Join("./files", fileName)
 	destFile, err := os.Create(destPath)
 	if err != nil {
 		return fmt.Errorf("error creating file: %s", err.Error())
@@ -21,6 +21,11 @@ func (c *ImageStorageLogic) StoreImage(file multipart.File, filename string) err
 	_, err = io.Copy(destFile, file)
 	if err != nil {
 		return fmt.Errorf("error copying contents to file: %s", err.Error())
+	}
+
+	err = CreateMetadataFile(fileName)
+	if err != nil {
+		return fmt.Errorf("error creating meta data: %s", err.Error())
 	}
 
 	return nil
