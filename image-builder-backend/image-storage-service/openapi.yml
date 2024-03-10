@@ -14,7 +14,7 @@ paths:
         description: The file to be uploaded
         required: true
         content:
-          multipart/form-data:
+          application/x-iso9660-image:
             schema:
               type: object
               properties:

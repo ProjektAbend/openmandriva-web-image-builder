@@ -2,11 +2,16 @@ package models
 
 import (
 	amqp "github.com/rabbitmq/amqp091-go"
+	"mime/multipart"
 )
 
 type ImageBuilderLogicInterface interface {
 	BuildImage(imageConfig ImageConfig) (ImageId, error)
 	GetStatusOfImage(imageId ImageId) (ImageInfo, error)
+}
+
+type ImageStorageLogicInterface interface {
+	StoreImage(file multipart.File, filename string) error
 }
 
 type MessageBrokerInterface interface {
