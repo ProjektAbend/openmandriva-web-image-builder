@@ -19,9 +19,6 @@ type Error struct {
 }
 
 func (s GinServer) UploadFile(context *gin.Context) {
-	contentType := context.Request.Header.Get("Content-Type")
-	fmt.Println("Content-Type:", contentType)
-
 	file, header, err := context.Request.FormFile("file")
 	if err != nil {
 		context.String(http.StatusBadRequest, fmt.Sprintf("Error: %s", err.Error()))
@@ -36,7 +33,23 @@ func (s GinServer) UploadFile(context *gin.Context) {
 		return
 	}
 
-	context.JSON(http.StatusOK, nil)
+	context.JSON(http.StatusOK, gin.H{"message": "file was successfully saved to disk."})
+}
+
+func (s GinServer) GetIsoFile(context *gin.Context, fileName string) {
+	filePath, err := s.ImageStorageLogic.GetIsoFile(fileName)
+	if err != nil {
+		log.Printf("Error in GetIsoFile: %s", err)
+		sendError(context, http.StatusInternalServerError, "Failed to retrieve the file")
+		return
+	}
+
+	if !s.ImageStorageLogic.DoesFileExist(filePath) {
+		log.Printf("file %s not found.", fileName)
+		sendError(context, http.StatusNotFound, "file not found.")
+		return
+	}
+	context.File(filePath)
 }
 
 func sendError(c *gin.Context, code int, message string) {

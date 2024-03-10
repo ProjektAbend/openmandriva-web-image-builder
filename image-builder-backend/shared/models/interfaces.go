@@ -11,7 +11,9 @@ type ImageBuilderLogicInterface interface {
 }
 
 type ImageStorageLogicInterface interface {
-	StoreImage(file multipart.File, filename string) error
+	StoreImage(file multipart.File, fileName string) error
+	GetIsoFile(fileName string) (string, error)
+	DoesFileExist(filePath string) bool
 }
 
 type MessageBrokerInterface interface {
