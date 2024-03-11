@@ -1,0 +1,13 @@
+<component name="ProjectRunConfigurationManager">
+  <configuration default="false" name="test image-storage-service" type="GoTestRunConfiguration" factoryName="Go Test">
+    <module name="openmandriva-web-image-builder" />
+    <working_directory value="$PROJECT_DIR$/image-builder-backend/image-storage-service/test" />
+    <root_directory value="$PROJECT_DIR$/image-builder-backend/api-gateway-service" />
+    <kind value="DIRECTORY" />
+    <package value="github.com/api-gateway-service/test" />
+    <directory value="$PROJECT_DIR$/image-builder-backend/image-storage-service/test" />
+    <filePath value="$PROJECT_DIR$" />
+    <framework value="gotest" />
+    <method v="2" />
+  </configuration>
+</component>

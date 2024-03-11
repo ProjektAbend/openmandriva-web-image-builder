@@ -37,6 +37,15 @@ paths:
                 properties:
                   message:
                     type: string
+        '500':
+          description: Internal Server Error
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  message:
+                    type: string
   /download/{fileName}:
     get:
       description: Retrieve an ISO image by its file name
