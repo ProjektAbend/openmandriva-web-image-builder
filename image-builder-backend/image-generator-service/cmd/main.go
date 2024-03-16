@@ -6,6 +6,7 @@ import (
 	"github.com/shared/messagebroker"
 	"github.com/shared/mocks"
 	"github.com/shared/models"
+	"github.com/shared/status"
 	"log"
 	"os"
 )
@@ -18,16 +19,22 @@ func main() {
 		log.Fatalf("Error trying to instantiate MessageBroker: %s", err)
 	}
 
+	buildStatusHandler := &status.BuildStatusHandler{
+		MessageBroker: messageBroker,
+	}
+
 	var commandHandler models.CommandHandlerInterface
 	if useMocks() {
+		log.Printf("Run ImageGeneratorService in MOCK MODE")
 		commandHandler = &mocks.MockCommandHandlerGenerateFakeIso{}
 	} else {
 		commandHandler = &logic.CommandHandler{}
 	}
 
 	generatorLogic := &logic.GeneratorLogic{
-		MessageBroker:  messageBroker,
-		CommandHandler: commandHandler,
+		MessageBroker:      messageBroker,
+		BuildStatusHandler: buildStatusHandler,
+		CommandHandler:     commandHandler,
 	}
 
 	generatorLogic.ProcessBuildRequests()
@@ -44,7 +51,6 @@ func getMessageBrokerHost() string {
 func useMocks() bool {
 	for _, arg := range os.Args {
 		if arg == "--mock" {
-			log.Printf("Run ImageGeneratorService in MOCK MODE")
 			return true
 		}
 	}

@@ -6,16 +6,30 @@ import (
 	"github.com/go-playground/validator/v10"
 	"github.com/shared/constants"
 	"github.com/shared/messagebroker"
+	"github.com/shared/status"
 	"github.com/teris-io/shortid"
+	"log"
 )
 
 func main() {
-	messageBroker, _ := messagebroker.New(constants.LOCAL_HOST)
-	shortIdGenerator, _ := shortid.New(1, shortid.DefaultABC, 2342)
+	messageBroker, err := messagebroker.New(constants.LOCAL_HOST)
+	if err != nil {
+		log.Fatalf("Error trying to instantiate MessageBroker: %s", err)
+	}
+
+	buildStatusHandler := &status.BuildStatusHandler{
+		MessageBroker: messageBroker,
+	}
+
+	shortIdGenerator, err := shortid.New(1, shortid.DefaultABC, 2342)
+	if err != nil {
+		log.Fatalf("Error trying to instantiate ShortIdGenerator: %s", err)
+	}
 
 	imageBuilderLogic := &logic.ImageBuilderLogic{
-		MessageBroker:    messageBroker,
-		ShortIdGenerator: shortIdGenerator,
+		MessageBroker:      messageBroker,
+		BuildStatusHandler: buildStatusHandler,
+		ShortIdGenerator:   shortIdGenerator,
 	}
 
 	validate := validator.New()

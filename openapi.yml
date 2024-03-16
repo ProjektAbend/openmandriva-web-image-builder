@@ -69,6 +69,24 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/ImageInfo'
+        '404':
+          description: ImageId not found
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  message:
+                    type: string
+        '500':
+          description: Internal Server Error
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  message:
+                    type: string
   /image/{imageId}:
     get:
       summary: Gets an image by its ID
@@ -166,6 +184,20 @@ components:
         - UNSUPPORTED
         - RESTRICTED
         - NON-FREE
+    Status:
+      type: string
+      enum:
+        - REQUESTED
+        - ACCEPTED
+        - FETCHED
+        - BUILD_STARTED
+        - BUILD_FAILED
+        - BUILD_FINISHED
+        - UPLOAD_STARTED
+        - UPLOAD_FAILED
+        - AVAILABLE
+        - EXPIRED
+        - DOES_NOT_EXIST
     ImageInfo:
       type: object
       required:
@@ -173,10 +205,8 @@ components:
       properties:
         imageId:
           $ref: '#/components/schemas/ImageId'
-        isAvailable:
-          type: boolean
-          description: Indicates whether the image is available to download
-          example: true
+        status:
+          $ref: '#/components/schemas/Status'
         availableUntil:
           type: string
           format: date-time
