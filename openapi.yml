@@ -106,6 +106,24 @@ paths:
               schema:
                 type: string
                 format: binary
+        '404':
+          description: File not found
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  message:
+                    type: string
+        '500':
+          description: Internal Server Error
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  message:
+                    type: string
 components:
   schemas:
     ImageConfig:
@@ -214,7 +232,7 @@ components:
             The date and time until which the image is available.
             An image is available for download for 24 hours
             after being generated
-          example: "2023-08-15T12:34:56Z"
+          example: '2023-08-15T12:34:56Z'
     ImageId:
       type: string
       description: >

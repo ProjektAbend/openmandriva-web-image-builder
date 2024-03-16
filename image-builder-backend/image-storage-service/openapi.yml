@@ -1,0 +1,86 @@
+openapi: 3.0.3
+info:
+  title: ImageStorageService API
+  version: 1.0.0
+paths:
+  /upload:
+    post:
+      description: Upload an ISO image file
+      operationId: uploadFile
+      requestBody:
+        description: The ISO image file to be uploaded
+        required: true
+        content:
+          application/x-iso9660-image:
+            schema:
+              type: object
+              properties:
+                file:
+                  type: string
+                  format: binary
+      responses:
+        '200':
+          description: File uploaded successfully
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  message:
+                    type: string
+        '400':
+          description: No file uploaded
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  message:
+                    type: string
+        '500':
+          description: Internal Server Error
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  message:
+                    type: string
+  /download/{fileName}:
+    get:
+      description: Retrieve an ISO image by its file name
+      operationId: getIsoFile
+      parameters:
+        - name: fileName
+          in: path
+          required: true
+          schema:
+            type: string
+            description: The name of the file to be downloaded
+            example: 'WZ3h633-p.iso'
+      responses:
+        '200':
+          description: The image was found. The response is an .iso file
+          content:
+            application/x-iso9660-image:
+              schema:
+                type: string
+                format: binary
+        '404':
+          description: File not found
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  message:
+                    type: string
+        '500':
+          description: Internal Server Error
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  message:
+                    type: string

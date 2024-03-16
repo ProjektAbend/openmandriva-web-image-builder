@@ -25,7 +25,7 @@ When the API controller is generated, the server can be started:
 ```shell
 go run main.go
 ```
-
+If you use goland you can also use this run configuration: `start api-gateway-service` instead.
 
 ## Known Issues
 
