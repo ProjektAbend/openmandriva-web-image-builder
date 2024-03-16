@@ -40,6 +40,30 @@ func TestUploadFileShouldReturn500WhenLogicReturnsError(t *testing.T) {
 	require.Equal(t, http.StatusInternalServerError, response.Code)
 }
 
+func TestGetIsoFileShouldReturn200(t *testing.T) {
+	server := initServer(&mocks.MockImageStorageLogic{})
+
+	response := sendRequestDownload(t, server, "test.txt")
+
+	require.Equal(t, http.StatusOK, response.Code)
+}
+
+func TestGetIsoFileShouldReturn404WhenFileDoesNotExist(t *testing.T) {
+	server := initServer(&mocks.MockImageStorageLogic{})
+
+	response := sendRequestDownload(t, server, "test2.txt")
+
+	require.Equal(t, http.StatusNotFound, response.Code)
+}
+
+func TestGetIsoFileShouldReturn500WhenLogicReturnsError(t *testing.T) {
+	server := initServer(&mocks.MockImageStorageLogicReturnsError{})
+
+	response := sendRequestDownload(t, server, "test.txt")
+
+	require.Equal(t, http.StatusInternalServerError, response.Code)
+}
+
 func getRequestBody() (*bytes.Buffer, string, error) {
 	body := &bytes.Buffer{}
 	writer := multipart.NewWriter(body)
@@ -79,6 +103,26 @@ func sendRequestUpload(t *testing.T, server *api.GinServer, payload *bytes.Buffe
 	}
 
 	request.Header.Set("Content-Type", contentType)
+	recorder := httptest.NewRecorder()
+	route.ServeHTTP(recorder, request)
+
+	return recorder
+}
+
+func sendRequestDownload(t *testing.T, server *api.GinServer, fileName string) *httptest.ResponseRecorder {
+	route := gin.Default()
+	route.GET("/download/:fileName", func(c *gin.Context) {
+		server.GetIsoFile(c, c.Param("fileName"))
+	})
+
+	payloadByte := []byte("")
+
+	request, err := http.NewRequest("GET", "/download/"+fileName, bytes.NewBuffer(payloadByte))
+	if err != nil {
+		t.Errorf("error while sending request")
+	}
+
+	request.Header.Set("Content-Type", "application/json")
 	recorder := httptest.NewRecorder()
 	route.ServeHTTP(recorder, request)
 

@@ -11,8 +11,8 @@ func (_ *MockImageStorageLogic) StoreImage(_ multipart.File, _ string) error {
 	return nil
 }
 
-func (_ *MockImageStorageLogic) GetIsoFile(_ string) (string, error) {
-	return "", nil
+func (_ *MockImageStorageLogic) GetIsoFile(fileName string) (string, error) {
+	return "../resources/" + fileName, nil
 }
 
 func (_ *MockImageStorageLogic) DoesFileExist(_ string) bool {

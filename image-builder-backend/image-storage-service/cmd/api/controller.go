@@ -49,6 +49,7 @@ func (s GinServer) GetIsoFile(context *gin.Context, fileName string) {
 		sendError(context, http.StatusNotFound, "file not found.")
 		return
 	}
+
 	context.File(filePath)
 }
 
