@@ -1,13 +1,16 @@
 package logic
 
 import (
+	"context"
 	"encoding/json"
 	"fmt"
 	"github.com/shared/constants"
 	"github.com/shared/models"
 	"github.com/shared/status"
 	"github.com/teris-io/shortid"
+	"io"
 	"log"
+	"net/http"
 )
 
 type ImageBuilderLogic struct {
@@ -51,6 +54,31 @@ func (c *ImageBuilderLogic) generateImageId() (models.ImageId, error) {
 		return "", err
 	}
 	return shortId, nil
+}
+
+func (c *ImageBuilderLogic) GetImage(imageId models.ImageId) ([]byte, error) {
+	client, err := NewClient("http://localhost:8084")
+	if err != nil {
+		return nil, fmt.Errorf("error creating image-storage client: %s", err)
+	}
+
+	fileName := imageId + ".iso"
+	response, err := client.GetIsoFile(context.Background(), fileName)
+	if err != nil {
+		return nil, fmt.Errorf("error while calling GetIsoFile: %s", err)
+	}
+	defer response.Body.Close()
+
+	if response.StatusCode != http.StatusOK {
+		return nil, fmt.Errorf("unexpected status code: %d", response.StatusCode)
+	}
+
+	fileContent, err := io.ReadAll(response.Body)
+	if err != nil {
+		return nil, err
+	}
+
+	return fileContent, nil
 }
 
 func (c *ImageBuilderLogic) GetStatusOfImage(imageId models.ImageId) (models.ImageInfo, error) {

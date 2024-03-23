@@ -8,6 +8,7 @@ import (
 type ImageBuilderLogicInterface interface {
 	BuildImage(imageConfig ImageConfig) (ImageId, error)
 	GetStatusOfImage(imageId ImageId) (ImageInfo, error)
+	GetImage(imageId ImageId) ([]byte, error)
 }
 
 type ImageStorageLogicInterface interface {

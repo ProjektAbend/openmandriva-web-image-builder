@@ -40,8 +40,16 @@ func (s GinServer) BuildImage(context *gin.Context) {
 	context.JSON(http.StatusCreated, gin.H{"imageId": imageId})
 }
 
-func (s GinServer) GetImageById(context *gin.Context, _ models.ImageId) {
-	context.Status(http.StatusNotImplemented)
+func (s GinServer) GetImageById(context *gin.Context, imageId models.ImageId) {
+	fileContent, err := s.ImageBuilderLogic.GetImage(imageId)
+	if err != nil {
+		log.Printf("Failed to download file: %s", err)
+		sendError(context, http.StatusInternalServerError, "Failed to retrieve the image")
+		return
+	}
+
+	context.Header("Content-Type", "application/x-iso9660-image")
+	context.Data(http.StatusOK, "application/x-iso9660-image", fileContent)
 }
 
 func (s GinServer) GetStatusOfImageById(context *gin.Context, imageId models.ImageId) {
